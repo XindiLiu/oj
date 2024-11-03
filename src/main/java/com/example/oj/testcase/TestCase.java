@@ -14,29 +14,31 @@ import org.hibernate.annotations.DynamicUpdate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@Table(name="testcase")
+@ToString(exclude = "problem") // Exclude to prevent infinite recursion
+@Table(name = "testcase")
 @DynamicUpdate
 @DynamicInsert
 public class TestCase {
-//    @EmbeddedId
-//    TestCaseId id;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long testCaseId;
-    @Column(name="name")
-    String name;
-//    @MapsId("problemId")
-    @JoinColumn(name="problem_id", referencedColumnName="id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
-    Problem problem;
-    @Column(name="input")
-    String input;
-    // The correct output
-    @Column(name="output")
-    String output;
-    // The weight in the calculation of the total score.
-    @Column(name="weight")
-    Integer weight;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	Integer testCaseId;
+
+	@Column(name = "name")
+	String name;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "problem_id", referencedColumnName = "id")
+	@JsonIgnore
+	Problem problem;
+
+	@Column(name = "input_path")
+	String inputPath;
+
+	@Column(name = "output_path")
+	String outputPath;
+
+	// The weight in the calculation of the total score.
+	@Column(name = "weight")
+	Integer weight;
 }

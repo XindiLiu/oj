@@ -6,32 +6,70 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name="user")
+@Table(name = "user")
 @DynamicUpdate
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    Long id;
-    @Column(name = "username", unique = true, nullable = false, updatable = false)
-    String username;
-    @Column(name = "password", nullable = false)
-    String password;
-    @Column(name = "name")
-    String name;
-    @Column(name = "score")
-    Long score;
-    @Column(name = "create_time")
-    LocalDateTime createTime;
-    @Column(name = "update_time")
-    LocalDateTime updateTime;
+public class User implements UserDetails {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	Long id;
+	@Column(name = "username", unique = true, nullable = false, updatable = false)
+	String username;
+	@Column(name = "password", nullable = false)
+	String password;
+	@Column(name = "name")
+	String name;
+	@Column(name = "score")
+	Long score;
+	@CreationTimestamp
+	@Column(name = "create_time")
+	Date createTime;
+	@UpdateTimestamp
+	@Column(name = "update_time")
+	Date updateTime;
+
+	@Enumerated(EnumType.STRING)
+	Role role;
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return null;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 //    Role role;
 
 

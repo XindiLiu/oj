@@ -12,49 +12,51 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("test")
 @Slf4j
 public class TestController {
-    @GetMapping("/hello")
-    public String hello() {
-        return "hello spring security";
-    }
-    @PostMapping
-    @ResponseBody
-    public Result test(@RequestBody TestEntity test){
-        log.info("test {}", test);
-        return Result.success(test);
-    }
+	@GetMapping("/hello")
+	public String hello() {
+		log.info("hello");
+		return "hello spring security";
+	}
 
-    @GetMapping
-    public Result test(HttpServletRequest request, HttpServletResponse response){
-        log.info("test {} {}", request, response);
+	@PostMapping
+	@ResponseBody
+	public Result test(@RequestBody TestEntity test) {
+		log.info("test {}", test);
+		return Result.success(test);
+	}
 
-        log.info("Host: {}", request.getHeader("Host"));
-        Cookie tokenCookie = new Cookie("token","12345");
-        tokenCookie.setMaxAge(Integer.MAX_VALUE);
-        response.addCookie(tokenCookie);
-        return Result.success();
-    }
+	@GetMapping
+	public Result test(HttpServletRequest request, HttpServletResponse response) {
+		log.info("test {} {}", request, response);
 
-    @PostMapping("/cookie")
-    public Result addCookie(HttpServletRequest request, HttpServletResponse response){
-        Cookie tokenCookie = new Cookie("token","12345");
-        tokenCookie.setMaxAge(Integer.MAX_VALUE);
-        response.addCookie(tokenCookie);
-        return Result.success();
-    }
+		log.info("Host: {}", request.getHeader("Host"));
+		Cookie tokenCookie = new Cookie("token", "12345");
+		tokenCookie.setMaxAge(Integer.MAX_VALUE);
+		response.addCookie(tokenCookie);
+		return Result.success();
+	}
 
-    @GetMapping("/cookie")
-    public Result getCookie(HttpServletRequest request, HttpServletResponse response){
-        var cookies = request.getCookies();
-        for(var c : cookies){
-            log.info("cookie: {}", c.getName());
-        }
+	@PostMapping("/cookie")
+	public Result addCookie(HttpServletRequest request, HttpServletResponse response) {
+		Cookie tokenCookie = new Cookie("token", "12345");
+		tokenCookie.setMaxAge(Integer.MAX_VALUE);
+		response.addCookie(tokenCookie);
+		return Result.success();
+	}
 
-        return Result.success();
-    }
+	@GetMapping("/cookie")
+	public Result getCookie(HttpServletRequest request, HttpServletResponse response) {
+		var cookies = request.getCookies();
+		for (var c : cookies) {
+			log.info("cookie: {}", c.getName());
+		}
 
-    @GetMapping("/{id}")
-    public Result testGet(@PathVariable int id){
-        log.info("testGet {}", id);
-        return Result.success(id);
-    }
+		return Result.success();
+	}
+
+	@GetMapping("/{id}")
+	public Result testGet(@PathVariable int id) {
+		log.info("testGet {}", id);
+		return Result.success(id);
+	}
 }

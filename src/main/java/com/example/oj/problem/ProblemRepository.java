@@ -10,12 +10,13 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface ProblemRepository extends CrudRepository<Problem, Long> {
-    @AutoFill
-    Problem save(Problem problem);
-    Problem getById(Long id);
+	Problem save(Problem problem);
 
-    Page<Problem> findAll(Specification<Problem> specification, Pageable pageable);
-    List<Problem> findAll(Specification<Problem> specification);
+	Problem getById(Long id);
+
+	Page<Problem> findAll(Specification<Problem> specification, Pageable pageable);
+
+	List<Problem> findAll(Specification<Problem> specification);
 
 
 }

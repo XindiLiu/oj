@@ -1,16 +1,15 @@
 package com.example.oj.constant;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+public enum SubmissionResultType {
 
-public enum Judgement {
-
-    PD,
-    CE,
-    RE,
-    TLE,
-    MLE,
-    WA,
-    AC;
+	PD,
+	CE,
+	RE,
+	TLE,
+	MLE,
+	WA,
+	AC,
+	JE;
 //    @JsonValue
 //    public String getJSON() {
 //        return this.name();

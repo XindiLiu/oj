@@ -1,3 +1,4 @@
+/*
 package com.example.oj.submission;
 
 import com.example.oj.submission.Submission;
@@ -23,3 +24,4 @@ public class SubmissionDetail {
     String code;
     String message;
 }
+*/

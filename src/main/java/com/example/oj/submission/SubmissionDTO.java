@@ -10,6 +10,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class SubmissionDTO {
-    String code;
-    String language;
+	String code;
+	String language;
+	String fileName;
+
 }

@@ -13,52 +13,52 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/problem")
 @Slf4j
 public class ProblemController {
-    @Autowired
-    ProblemServiceImpl problemService;
+	@Autowired
+	ProblemServiceImpl problemService;
 
-    @PostMapping
-    public Result save(@RequestBody ProblemDTO problemDTO){
-        Problem problem = new Problem();
-        ProblemDetail detail = new ProblemDetail();
-        BeanUtils.copyProperties(problemDTO, problem);
-        BeanUtils.copyProperties(problemDTO, detail);
-        problem.setProblemDetail(detail);
-        detail.setProblem(problem);
-        problemService.save(problem);
-        return Result.success();
-    }
+	@PostMapping
+	public Result save(@RequestBody ProblemDTO problemDTO) {
+		Problem problem = new Problem();
+		ProblemDetail detail = new ProblemDetail();
+		BeanUtils.copyProperties(problemDTO, problem);
+		BeanUtils.copyProperties(problemDTO, detail);
+		problem.setProblemDetail(detail);
+		detail.setProblem(problem);
+		problemService.save(problem);
+		return Result.success();
+	}
 
-    @PostMapping("data")
-    public Result uploadTestData(@RequestParam MultipartFile file){
-        problemService.uploadTestData(file);
-        return Result.success();
-    }
+	@PostMapping("data")
+	public Result uploadTestData(@RequestParam MultipartFile file) {
+		problemService.uploadTestData(file);
+		return Result.success();
+	}
 
-    @PutMapping
-    public Result update(@RequestBody Problem problem){
-        problemService.save(problem);
-        return Result.success();
-    }
+	@PutMapping
+	public Result update(@RequestBody Problem problem) {
+		problemService.update(problem);
+		return Result.success();
+	}
 
-    @GetMapping("/{id}")
-    public Result getById(@PathVariable Long id){
-        Problem problem = problemService.getById(id);
-        problem.setProblemDetail(null);
+	@GetMapping("/{id}")
+	public Result getById(@PathVariable Long id) {
+		Problem problem = problemService.getById(id);
+		problem.setProblemDetail(null);
 //        problem.getProblemDetail();
-        return Result.success(problem);
-    }
+		return Result.success(problem);
+	}
 
-    @GetMapping("/detail/{id}")
-    public Result getDetailById(@PathVariable Long id){
-        ProblemDetail problem = problemService.getDetailById(id);
+	@GetMapping("/detail/{id}")
+	public Result getDetailById(@PathVariable Long id) {
+		ProblemDetail problem = problemService.getDetailById(id);
 //        problem.getProblemDetail();
-        return Result.success(problem);
-    }
+		return Result.success(problem);
+	}
 
-    @GetMapping("/page")
-    public Result page(@RequestParam int pageNumber, @RequestParam int pageSize, @RequestBody ProblemPageDTO problemPageDTO){
-        Page<Problem> problemPage = problemService.page(pageNumber, pageSize, problemPageDTO);
-        return Result.success(problemPage);
-    }
+	@GetMapping("/page")
+	public Result page(@RequestParam int pageNumber, @RequestParam int pageSize, @RequestBody ProblemPageDTO problemPageDTO) {
+		Page<Problem> problemPage = problemService.page(pageNumber, pageSize, problemPageDTO);
+		return Result.success(problemPage);
+	}
 
 }
