@@ -33,5 +33,5 @@ build/
 .vscode/
 
 **/Notes.md
-data/
-react/
+data/**
+react/**
