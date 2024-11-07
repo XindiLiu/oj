@@ -2,25 +2,33 @@ package com.example.oj.submission;
 
 import com.example.oj.annotation.AutoFill;
 import com.example.oj.codeTester.CodeTester;
+import com.example.oj.constant.ProgrammingLanguage;
 import com.example.oj.constant.SubmissionResultType;
+import com.example.oj.problem.ProblemRepository;
+import com.example.oj.problem.ProblemSimplePorj;
 import com.example.oj.user.User;
+import com.example.oj.user.UserRepository;
+import com.example.oj.user.UserSimpleProj;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
+import java.util.List;
 
 @Service
 @Slf4j
 public class SubmissionService {
 	@Autowired
 	SubmissionRepository submissionRepository;
+	@Autowired
+	ProblemRepository problemRepository;
+	@Autowired
+	UserRepository userRepository;
 	@Autowired
 	CodeTester codeTester;
 
@@ -29,41 +37,47 @@ public class SubmissionService {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		submission.setUser(user);
 		Submission savedSubmission = submissionRepository.save(submission);
-		// Run code testing async.
+		// Run code testing async. 
 		runCodeTesting(savedSubmission);
 		return savedSubmission;
 	}
-
 
 	@Async("taskExecutor")
 	@Transactional
 	public void runCodeTesting(Submission submission) {
 		try {
 			// Update the submission status to RUNNING
-			submission.setSubmissionStatus(SubmissionStatus.RUNNING);
+			submission.setStatus(SubmissionStatus.RUNNING);
 			submissionRepository.save(submission);
 			Submission testedSubmission = codeTester.test(submission.getProblem(), submission);
-			BeanUtils.copyProperties(testedSubmission, submission, "id", "problem", "user", "createTime", "code", "fileName", "language");
+			BeanUtils.copyProperties(testedSubmission, submission, "id", "problem", "user", "createTime", "code",
+					"fileName", "language");
 			submissionRepository.save(submission);
 		} catch (Exception e) {
-			submission.setSubmissionStatus(SubmissionStatus.FAILED);
-			submission.setSubmissionResultType(SubmissionResultType.JE);
+			submission.setStatus(SubmissionStatus.FAILED);
+			submission.setJudgement(SubmissionResultType.JE);
 			submission.setMessage("Error on code testing");
 			submissionRepository.save(submission);
 			log.error("Error on code testing:{}", e.getMessage());
-//			throw new RuntimeException(e);
+			//			throw new RuntimeException(e);
 		}
-//		return submission;
+		//		return submission;
 	}
-
-//	public Long updateAfterTest(Submission submission) {
-//		Submission savedSubmission = submissionRepository.save(submission);
-//		return savedSubmission.getId();
-//	}
 
 	public Submission getById(Long id) {
 		Submission submission = submissionRepository.getById(id);
 		return submission;
+	}
+
+	@Transactional
+	public SubmissionSimple getSimpleById(Long id) {
+		SubmissionSimple submissionSimple = submissionRepository.findProblemSimpleById(id);
+		ProblemSimplePorj problemSimplePorj = problemRepository
+				.findProblemSimpleById(submissionSimple.getProblem().getId());
+		UserSimpleProj userSimpleProj = userRepository.findUserSimpleById(submissionSimple.getUser().getId());
+		submissionSimple.getProblem().setTitle(problemSimplePorj.getTitle());
+		submissionSimple.getUser().setName(userSimpleProj.getName());
+		return submissionSimple;
 	}
 
 	//    public String getCodeById(Long id) {
@@ -71,8 +85,8 @@ public class SubmissionService {
 	//        return submission;
 	//    }
 	//
-	public Page<Submission> getAllSubmissionsByUser(Long id, Pageable pageable) {
-		Page<Submission> submissions = submissionRepository.findByUserIdOrderByCreateTimeDesc(id, pageable);
+	public Page<SubmissionSimple> getAllSubmissionsByUser(Long id, Pageable pageable) {
+		Page<SubmissionSimple> submissions = submissionRepository.findSimpleByUserIdOrderByCreateTimeDesc(id, pageable);
 		return submissions;
 	}
 
@@ -86,4 +100,20 @@ public class SubmissionService {
 		Page<Submission> submission = submissionRepository.findByProblemIdOrderByCreateTimeDesc(id, pageable);
 		return submission;
 	}
+
+	//	public List<Submission> get10FastestByProblem(Long id, SubmissionStatus status, SubmissionResultType judgement, Pageable pageable) {
+	//		Window<Submission> submissionWindow = submissionRepository.findFirst10ByProblemIdAndStatusAndJudgementOrderByRunTimeMs(id, status, judgement, ScrollPosition.offset());
+	//		List<Submission> submission = submissionWindow.toList();
+	//		return submission;
+	//
+	//	}
+	public List<Submission> getFastestByProblem(Long id, ProgrammingLanguage language) {
+		//		List<Submission> submission = submissionRepository.findByProblemIdAndStatusAndJudgementOrderByRunTimeMs(id, SubmissionStatus.FINISHED, SubmissionResultType.AC, Sort.by("run_time").ascending(), Limit.of(limit));
+		List<Submission> submission = submissionRepository
+				.findFirst10ByProblemIdAndLanguageAndStatusAndJudgementOrderByRunTimeMs(id, language,
+						SubmissionStatus.FINISHED, SubmissionResultType.AC, ScrollPosition.offset())
+				.toList();
+		return submission;
+	}
+
 }

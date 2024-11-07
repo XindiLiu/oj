@@ -6,17 +6,15 @@ import org.springframework.beans.BeanWrapperImpl;
 
 import java.beans.FeatureDescriptor;
 import java.util.stream.Stream;
-import java.util.Set;
-import java.util.HashSet;
 
 public class BeanCopyUtils {
 
-	public static void copyNonNullProperties(Object src, Object target) {
+	public static void copyNonNullSrcProperties(Object src, Object target) {
 		String[] emptyNames = getNullPropertyNames(src);
 		BeanUtils.copyProperties(src, target, emptyNames);
 	}
 
-	public static void copyNullPropertiesTaget(Object src, Object target) {
+	public static void copyNullTargetProperties(Object src, Object target) {
 		String[] emptyNames = getNullPropertyNames(target);
 		BeanUtils.copyProperties(src, target, emptyNames);
 	}

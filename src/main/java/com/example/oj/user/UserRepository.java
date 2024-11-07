@@ -1,6 +1,5 @@
 package com.example.oj.user;
 
-import com.example.oj.user.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -12,6 +11,8 @@ public interface UserRepository extends CrudRepository<User, Long>, PagingAndSor
 	User findByUsername(String username);
 
 	User getUserById(Long id);
+
+	UserSimpleProj findUserSimpleById(Long id);
 
 	boolean existsByUsername(String username);
 

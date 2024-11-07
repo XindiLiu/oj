@@ -4,7 +4,6 @@ import com.example.oj.common.Result;
 //import com.example.oj.utils.JwtUtil;
 import com.example.oj.constant.Role;
 import com.example.oj.utils.JwtUtil;
-import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,11 +11,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @Slf4j
-public class UserServiceImpl {
+public class UserService {
 	@Autowired
 	UserRepository userRepository;
 	@Autowired
@@ -75,5 +73,9 @@ public class UserServiceImpl {
 
 	public void update(User user) {
 		userRepository.save(user);
+	}
+
+	public UserSimpleProj findUserSimpleById(Long id) {
+		return userRepository.findUserSimpleById(id);
 	}
 }

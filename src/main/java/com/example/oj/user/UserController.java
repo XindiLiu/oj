@@ -1,13 +1,12 @@
 package com.example.oj.user;
 
 import com.example.oj.common.Result;
-import com.example.oj.utils.JwtUtil;
-import com.example.oj.utils.MD5Utils;
-import jakarta.servlet.http.Cookie;
+import com.example.oj.utils.BeanCopyUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class UserController {
 	@Autowired
-	UserServiceImpl userService;
+	private UserRepository userRepository;
+	@Autowired
+	UserService userService;
 
 	@PostMapping("/login")
 	public Result login(@RequestBody UserLoginDTO userLogin, HttpServletRequest request, HttpServletResponse response) {
@@ -58,27 +59,24 @@ public class UserController {
 		return Result.success(user);
 	}
 
+	@GetMapping("/user/simple/{id}")
+	public Result findUserSimpleById(@PathVariable Long id) {
+		UserSimpleProj user = userService.findUserSimpleById(id);
+		return Result.success(user);
+	}
+
 	@PutMapping("/user")
+	@PreAuthorize("@userSecurity.isCurrentUser(#user.id)")
 	public Result update(@RequestBody UserUpdateDTO user) {
-		log.info("编辑员工信息: {}", user);
+		log.info("Update user info: {}", user);
 		User currentUser;
 		if (user.id != null) {
 			currentUser = userService.getById(user.id);
-			if (currentUser == null) {
-				return Result.fail("No user id");
-			}
+			BeanCopyUtils.copyNonNullSrcProperties(user, currentUser);
 		} else {
 			return Result.fail("No user id");
 		}
-		if (user.password != null) {
-			currentUser.setPassword(MD5Utils.md5(user.password));
-		}
-		if (user.name != null) {
-			currentUser.setName(user.name);
-		}
-
 		userService.update(currentUser);
-
 		return Result.success();
 	}
 

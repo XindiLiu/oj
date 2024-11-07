@@ -15,7 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ProblemServiceImpl {
+public class ProblemService {
 	@Autowired
 	ProblemRepository problemRepository;
 	@Autowired
@@ -94,5 +93,10 @@ public class ProblemServiceImpl {
 	}
 
 	public void uploadTestData(MultipartFile file) {
+	}
+
+	public ProblemSimplePorj getSimpleById(Long id) {
+
+		return problemRepository.findProblemSimpleById(id);
 	}
 }

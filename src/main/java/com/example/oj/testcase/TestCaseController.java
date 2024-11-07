@@ -1,7 +1,7 @@
 package com.example.oj.testcase;
 
 import com.example.oj.common.Result;
-import com.example.oj.problem.ProblemServiceImpl;
+import com.example.oj.problem.ProblemService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,7 +17,7 @@ public class TestCaseController {
 	@Autowired
 	TestCaseService testCaseService;
 	@Autowired
-	ProblemServiceImpl problemRService;
+	ProblemService problemRService;
 
 	@PostMapping("/problem/{problemId}/testCases")
 	@ResponseBody

@@ -110,6 +110,9 @@ public class FileService {
 	public boolean rmDir(Path dir) throws IOException {
 		try {
 			// From the documentation of Interface FileVisitor<T>
+			if (!Files.exists(dir)) {
+				return true;
+			}
 			Files.walkFileTree(dir, new HashSet<>(), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
 				@Override
 				public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)

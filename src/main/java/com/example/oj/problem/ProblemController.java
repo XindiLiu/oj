@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class ProblemController {
 	@Autowired
-	ProblemServiceImpl problemService;
+	ProblemService problemService;
 
 	@PostMapping
 	public Result save(@RequestBody ProblemDTO problemDTO) {
@@ -52,6 +52,12 @@ public class ProblemController {
 	public Result getDetailById(@PathVariable Long id) {
 		ProblemDetail problem = problemService.getDetailById(id);
 //        problem.getProblemDetail();
+		return Result.success(problem);
+	}
+
+	@GetMapping("/simple/{id}")
+	public Result getSimpleById(@PathVariable Long id) {
+		ProblemSimplePorj problem = problemService.getSimpleById(id);
 		return Result.success(problem);
 	}
 

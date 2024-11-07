@@ -1,6 +1,7 @@
 package com.example.oj.user;
 
 import com.example.oj.constant.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,6 +32,7 @@ public class User implements UserDetails {
 	@Column(name = "username", unique = true, nullable = false, updatable = false)
 	String username;
 	@Column(name = "password", nullable = false)
+	@JsonIgnore
 	String password;
 	@Column(name = "name")
 	String name;

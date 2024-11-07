@@ -3,7 +3,6 @@ package com.example.oj.submission;
 import com.example.oj.user.User;
 import com.example.oj.constant.ProgrammingLanguage;
 import com.example.oj.constant.SubmissionResultType;
-import com.example.oj.submission.SubmissionStatus;
 import com.example.oj.problem.Problem;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -47,25 +46,24 @@ public class Submission {
 	ProgrammingLanguage language;
 	@Column(name = "status")
 	@Enumerated(EnumType.STRING)
-	SubmissionStatus submissionStatus;
+	SubmissionStatus status;
 	@Column(name = "judgement")
 	@Enumerated(EnumType.STRING)
-	SubmissionResultType submissionResultType;
-	@Column(name = "file_name", updatable = false)
-	String fileName;
+	SubmissionResultType judgement;
 	@Column(name = "run_time")
-	Long runTime;
+	Long runTimeMs;
 	@Column(name = "memory")
-	Long memory;
-	@Column(name = "message")
-	String message;
-	@Column(name = "code", updatable = false)
-	String code;
-
+	Long memoryByte;
 	@Column(name = "num_passed_cases")
 	Integer numPassedCases;
 	@Column(name = "total_cases")
 	Integer totalCases;
+	@Column(name = "file_name", updatable = false)
+	String fileName;
+	@Column(name = "code", updatable = false)
+	String code;
+	@Column(name = "message")
+	String message;
 
 	public Submission() {
 	}

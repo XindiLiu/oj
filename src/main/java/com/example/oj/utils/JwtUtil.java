@@ -65,8 +65,8 @@ public class JwtUtil {
 				.signWith(key)
 				.compact();
 		return jwt;
-
 	}
+
 
 	public static String getToken(HttpServletRequest request) {
 		if (request.getCookies() == null) {
