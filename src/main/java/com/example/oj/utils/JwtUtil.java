@@ -82,7 +82,7 @@ public class JwtUtil {
 
 	public static Claims getClaims(String token) {
 		Key key = Keys.hmacShaKeyFor(keyBytes.getBytes());
-		Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+		Claims claims = Jwts.parser().setSigningKey(key).build().parseClaimsJws(token).getBody();
 		return claims;
 	}
 
@@ -133,14 +133,14 @@ public class JwtUtil {
 	 * @param token     加密后的token
 	 * @return
 	 */
-	public static Claims parseJWT(String secretKey, String token) {
-		// 得到DefaultJwtParser
-		Claims claims = Jwts.parser()
-				// 设置签名的秘钥
-				.setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8))
-				// 设置需要解析的jwt
-				.parseClaimsJws(token).getBody();
-		return claims;
-	}
+//	public static Claims parseJWT(String secretKey, String token) {
+//		// 得到DefaultJwtParser
+//		Claims claims = Jwts.parser()
+//				// 设置签名的秘钥
+//				.setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8))
+//				// 设置需要解析的jwt
+//				.parseClaimsJws(token).getBody();
+//		return claims;
+//	}
 
 }

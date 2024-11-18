@@ -30,7 +30,7 @@ public class SubmissionController {
 		submission.setLanguage(ProgrammingLanguage.valueOf(submissionDTO.getLanguage()));
 		BeanUtils.copyProperties(submissionDTO, submission);
 
-		if (submission.getFileName() == null) {
+		if (submission.getFileName() == null || submission.getFileName().isEmpty()) {
 			submission.setFileName("unnamed." + submission.getLanguage().label);
 		}
 		Problem problem = problemService.getById(id);
@@ -63,8 +63,8 @@ public class SubmissionController {
 	//
 	@GetMapping("user/{id}/submissions")
 	public Result getAllByUserIdPage(@PathVariable Long id,
-			@RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
-			@RequestParam(value = "size", defaultValue = "20", required = false) Integer size) {
+									 @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+									 @RequestParam(value = "size", defaultValue = "20", required = false) Integer size) {
 
 		Pageable pageable = PageRequest.of(page, size);
 		Page<SubmissionSimple> submissions = submissionService.getAllSubmissionsByUser(id, pageable);
@@ -79,8 +79,8 @@ public class SubmissionController {
 
 	@GetMapping("problem/{id}/submissions")
 	public Result getByProblemId(@PathVariable Long id,
-			@RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
-			@RequestParam(value = "size", defaultValue = "20", required = false) Integer size) {
+								 @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+								 @RequestParam(value = "size", defaultValue = "20", required = false) Integer size) {
 		Pageable pageable = PageRequest.of(page, size);
 		Page<Submission> submission = submissionService.getByProblem(id, pageable);
 		return Result.success(submission);

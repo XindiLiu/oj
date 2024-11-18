@@ -4,12 +4,14 @@ import com.example.oj.constant.SubmissionResultType;
 import com.example.oj.filesystem.FileService;
 import com.example.oj.problem.Problem;
 import com.example.oj.submission.Submission;
+//import com.example.oj.submission.SubmissionService;
 import com.example.oj.submission.SubmissionStatus;
 import com.example.oj.testcase.TestCase;
 import com.example.oj.testcase.TestCaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -21,12 +23,15 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Component
 @Slf4j
 public class LocalDockeStdioCodeTester implements CodeTester {
-	@Autowired
-	TestCaseService testCaseService;
+	//	@Autowired
+	//	TestCaseService testCaseService;
+	//	@Autowired
+	//	SubmissionService submissionService;
 	@Value("${docker.image}")
 	String dockerImage;
 
@@ -40,7 +45,15 @@ public class LocalDockeStdioCodeTester implements CodeTester {
 
 	// TODO: Handle exceptions.
 	@Override
-	public Submission test(Problem problem, Submission submission) throws IOException, InterruptedException {
+	@Async
+	public void test(Problem problem, Submission submission, Consumer<Submission> afterCodeTesting) {
+		submission = testSubmission(problem, submission);
+		log.info("test finished: {}", submission.getId());
+		afterCodeTesting.accept(submission);
+		//		submissionService.afterCodeTesting(submission);
+	}
+
+	private Submission testSubmission(Problem problem, Submission submission) {
 		Path dockerMountFolder = null;
 		try {
 			//		Path dockerMountFolder = fileService.mkTempDir(dockerMountWorkspace, submission.getFileName()).toAbsolutePath();
@@ -85,7 +98,8 @@ public class LocalDockeStdioCodeTester implements CodeTester {
 					dockerImage, String.format("runner_stdio a.exe %d %d", timeLimit, memoryLimitMB));
 
 			log.info("Running test cases, execution command: {}", String.join(" ", exeCmd));
-			List<TestCase> testCases = testCaseService.getByProblemId(problem.getId());
+			//			List<TestCase> testCases = testCaseService.getByProblemId(problem.getId());
+			List<TestCase> testCases = problem.getTestCases();
 			submission.setTotalCases(testCases.size());
 			int nPassedCases = 0; // Loop counter
 			for (TestCase testCase : testCases) {
@@ -146,20 +160,25 @@ public class LocalDockeStdioCodeTester implements CodeTester {
 			}
 			log.info("passed {} of {} cases: {}", nPassedCases, submission.getTotalCases(),
 					submission.getJudgement());
-//			fileService.rmDir(dockerMountFolder);
-			return submission;
+			//			fileService.rmDir(dockerMountFolder);
+			//			return submission;
 		} catch (IOException e) {
 			submission.setJudgement(SubmissionResultType.JE);
 			submission.setStatus(SubmissionStatus.FAILED);
-			throw new RuntimeException(e);
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			submission.setJudgement(SubmissionResultType.JE);
+			submission.setStatus(SubmissionStatus.FAILED);
 		} finally {
 			if (dockerMountFolder != null) {
-				fileService.rmDir(dockerMountFolder);
+				try {
+					fileService.rmDir(dockerMountFolder);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
 			}
-		}
 
+		}
+		return submission;
 	}
 
 }

@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,19 +21,24 @@ public class UserController {
 
 	@PostMapping("/login")
 	public Result login(@RequestBody UserLoginDTO userLogin, HttpServletRequest request, HttpServletResponse response) {
-		log.info("login: {}", userLogin);
-//		userLogin.setPassword(MD5Utils.md5(userLogin.getPassword()));
-		String jwt = userService.login(userLogin);
 
-//		if (result.getCode() == 1) {
-//			User user = (User) result.getData();
-//			Cookie tokenCookie = new Cookie("token", JwtUtil.generateJWT(user));
-//			tokenCookie.setMaxAge(Integer.MAX_VALUE);
-//			response.addCookie(tokenCookie);
-//			log.info("logged in as:{}", user.getId());
-//		} else {
-//			log.info("login failed");
-//		}
+		log.info("login: {}", userLogin);
+		//		userLogin.setPassword(MD5Utils.md5(userLogin.getPassword()));
+		String jwt = null;
+		try {
+			jwt = userService.login(userLogin);
+		} catch (AuthenticationException e) {
+			return Result.fail("Invalid username or password.");
+		}
+		//		if (result.getCode() == 1) {
+		//			User user = (User) result.getData();
+		//			Cookie tokenCookie = new Cookie("token", JwtUtil.generateJWT(user));
+		//			tokenCookie.setMaxAge(Integer.MAX_VALUE);
+		//			response.addCookie(tokenCookie);
+		//			log.info("logged in as:{}", user.getId());
+		//		} else {
+		//			log.info("login failed");
+		//		}
 		return Result.success(jwt);
 	}
 
@@ -44,7 +50,7 @@ public class UserController {
 	@PostMapping("/register")
 	public Result register(@RequestBody User user) {
 		User savedUser = userService.register(user);
-//		user.setPassword(MD5Utils.md5(user.getPassword()));
+		//		user.setPassword(MD5Utils.md5(user.getPassword()));
 		if (savedUser == null) {
 			return Result.fail("Username exist");
 		} else {

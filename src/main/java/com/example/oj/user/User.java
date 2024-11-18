@@ -31,6 +31,7 @@ public class User implements UserDetails {
 	Long id;
 	@Column(name = "username", unique = true, nullable = false, updatable = false)
 	String username;
+
 	@Column(name = "password", nullable = false)
 	@JsonIgnore
 	String password;
@@ -44,7 +45,8 @@ public class User implements UserDetails {
 	@UpdateTimestamp
 	@Column(name = "update_time")
 	Date updateTime;
-
+	// @Column(name = "last_login_time")
+	// Date lastLoginTime;
 	@Enumerated(EnumType.STRING)
 	Role role;
 
@@ -72,75 +74,74 @@ public class User implements UserDetails {
 	public boolean isEnabled() {
 		return true;
 	}
-//    Role role;
+	//    Role role;
 
-
-//    public User(Long id, String username, String password, String name, Long score, LocalDateTime creationTime) {
-//        this.id = id;
-//        this.username = username;
-//        this.password = password;
-//        this.name = name;
-//        this.score = score;
-//        this.creationTime = creationTime;
-//    }
-//
-//    public void setScore(Long score) {
-//        this.score = score;
-//    }
-//
-//    public void setCreationTime(LocalDateTime creattionTime) {
-//        this.creationTime = creattionTime;
-//    }
-//
-//    public Long getScore() {
-//        return score;
-//    }
-//
-//    public LocalDateTime getCreationTime() {
-//        return creationTime;
-//    }
-//
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
-//
-//    public String getUsername() {
-//        return username;
-//    }
-//
-//    @Override
-//    public String toString() {
-//        return "User{" +
-//                "id=" + id +
-//                ", username=" + username +
-//                ", password=" + password +
-//                ", name=" + name +
-//                '}';
-//    }
-//
-//    public void setUsername(String username) {
-//        this.username = username;
-//    }
-//
-//    public String getPassword() {
-//        return password;
-//    }
-//
-//    public void setPassword(String password) {
-//        this.password = password;
-//    }
-//
-//    public String getName() {
-//        return name;
-//    }
-//
-//    public void setName(String name) {
-//        this.name = name;
-//    }
-//    public User() {
-//    }
+	//    public User(Long id, String username, String password, String name, Long score, LocalDateTime creationTime) {
+	//        this.id = id;
+	//        this.username = username;
+	//        this.password = password;
+	//        this.name = name;
+	//        this.score = score;
+	//        this.creationTime = creationTime;
+	//    }
+	//
+	//    public void setScore(Long score) {
+	//        this.score = score;
+	//    }
+	//
+	//    public void setCreationTime(LocalDateTime creattionTime) {
+	//        this.creationTime = creattionTime;
+	//    }
+	//
+	//    public Long getScore() {
+	//        return score;
+	//    }
+	//
+	//    public LocalDateTime getCreationTime() {
+	//        return creationTime;
+	//    }
+	//
+	//    public Long getId() {
+	//        return id;
+	//    }
+	//
+	//    public void setId(Long id) {
+	//        this.id = id;
+	//    }
+	//
+	//    public String getUsername() {
+	//        return username;
+	//    }
+	//
+	//    @Override
+	//    public String toString() {
+	//        return "User{" +
+	//                "id=" + id +
+	//                ", username=" + username +
+	//                ", password=" + password +
+	//                ", name=" + name +
+	//                '}';
+	//    }
+	//
+	//    public void setUsername(String username) {
+	//        this.username = username;
+	//    }
+	//
+	//    public String getPassword() {
+	//        return password;
+	//    }
+	//
+	//    public void setPassword(String password) {
+	//        this.password = password;
+	//    }
+	//
+	//    public String getName() {
+	//        return name;
+	//    }
+	//
+	//    public void setName(String name) {
+	//        this.name = name;
+	//    }
+	//    public User() {
+	//    }
 }

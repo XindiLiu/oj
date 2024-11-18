@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,13 @@ public class UserService {
 	PasswordEncoder passwordEncoder;
 
 	public String login(UserLoginDTO userLogin) {
+		// Check if the user is already authenticated
+		if (SecurityContextHolder.getContext().getAuthentication() != null &&
+				SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+			log.info("User is already logged in");
+			return null;
+		}
+
 		String username = userLogin.getUsername();
 		String password = userLogin.getPassword();
 		authenticationManager.authenticate(
@@ -45,7 +53,7 @@ public class UserService {
 		if (savedUser == null) {
 			return Result.fail("Registration failed");
 		} else {
-//            user.setPassword("******");
+			//            user.setPassword("******");
 			return Result.success(savedUser);
 		}
 	}

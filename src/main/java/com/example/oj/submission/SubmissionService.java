@@ -6,9 +6,12 @@ import com.example.oj.constant.ProgrammingLanguage;
 import com.example.oj.constant.SubmissionResultType;
 import com.example.oj.problem.ProblemRepository;
 import com.example.oj.problem.ProblemSimplePorj;
+import com.example.oj.testcase.TestCase;
 import com.example.oj.user.User;
 import com.example.oj.user.UserRepository;
 import com.example.oj.user.UserSimpleProj;
+import com.example.oj.userProblem.UserProblem;
+import com.example.oj.userProblem.UserProblemService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,38 +34,58 @@ public class SubmissionService {
 	UserRepository userRepository;
 	@Autowired
 	CodeTester codeTester;
+	@Autowired
+	UserProblemService userProblemService;
 
-	@AutoFill
+	@Transactional
+	public void afterCodeTesting(Submission submission) {
+		// Calculate the score
+		double score = 0;
+		double weightSum = 0;
+		int i = 0;
+		for (TestCase testCase : submission.getProblem().getTestCases()) {
+			if (i < submission.getNumPassedCases()) {
+				score += testCase.getWeight();
+			}
+			weightSum += testCase.getWeight();
+			i++;
+		}
+		submission.setScore(Integer.valueOf((int) ((score / weightSum) * 100)));
+		submissionRepository.save(submission);
+		userProblemService.afterCodeTesting(submission);
+	}
+
 	public Submission submit(Submission submission) {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		submission.setUser(user);
+		submission.setStatus(SubmissionStatus.RUNNING);
 		Submission savedSubmission = submissionRepository.save(submission);
+		codeTester.test(submission.getProblem(), submission, this::afterCodeTesting);
 		// Run code testing async. 
-		runCodeTesting(savedSubmission);
+		//		runCodeTesting(savedSubmission);
 		return savedSubmission;
 	}
 
-	@Async("taskExecutor")
-	@Transactional
-	public void runCodeTesting(Submission submission) {
-		try {
-			// Update the submission status to RUNNING
-			submission.setStatus(SubmissionStatus.RUNNING);
-			submissionRepository.save(submission);
-			Submission testedSubmission = codeTester.test(submission.getProblem(), submission);
-			BeanUtils.copyProperties(testedSubmission, submission, "id", "problem", "user", "createTime", "code",
-					"fileName", "language");
-			submissionRepository.save(submission);
-		} catch (Exception e) {
-			submission.setStatus(SubmissionStatus.FAILED);
-			submission.setJudgement(SubmissionResultType.JE);
-			submission.setMessage("Error on code testing");
-			submissionRepository.save(submission);
-			log.error("Error on code testing:{}", e.getMessage());
-			//			throw new RuntimeException(e);
-		}
-		//		return submission;
-	}
+	//	@Transactional
+	//	public void runCodeTesting(Submission submission) {
+	//		try {
+	//			// Update the submission status to RUNNING
+	//			submission.setStatus(SubmissionStatus.RUNNING);
+	//			submissionRepository.save(submission);
+	//			Submission testedSubmission = codeTester.test(submission.getProblem(), submission);
+	//			BeanUtils.copyProperties(testedSubmission, submission, "id", "problem", "user", "createTime", "code",
+	//					"fileName", "language");
+	//			submissionRepository.save(submission);
+	//		} catch (Exception e) {
+	//			submission.setStatus(SubmissionStatus.FAILED);
+	//			submission.setJudgement(SubmissionResultType.JE);
+	//			submission.setMessage("Error on code testing");
+	//			submissionRepository.save(submission);
+	//			log.error("Error on code testing:{}", e.getMessage());
+	//			//			throw new RuntimeException(e);
+	//		}
+	//		//		return submission;
+	//	}
 
 	public Submission getById(Long id) {
 		Submission submission = submissionRepository.getById(id);

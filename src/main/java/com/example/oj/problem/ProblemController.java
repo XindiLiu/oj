@@ -6,6 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,22 +21,22 @@ public class ProblemController {
 	ProblemService problemService;
 
 	@PostMapping
-	public Result save(@RequestBody ProblemDTO problemDTO) {
+	public Result save(@RequestBody ProblemCreateDTO problemCreateDTO) {
 		Problem problem = new Problem();
 		ProblemDetail detail = new ProblemDetail();
-		BeanUtils.copyProperties(problemDTO, problem);
-		BeanUtils.copyProperties(problemDTO, detail);
+		BeanUtils.copyProperties(problemCreateDTO, problem);
+		BeanUtils.copyProperties(problemCreateDTO, detail);
 		problem.setProblemDetail(detail);
 		detail.setProblem(problem);
 		problemService.save(problem);
 		return Result.success();
 	}
 
-	@PostMapping("data")
-	public Result uploadTestData(@RequestParam MultipartFile file) {
-		problemService.uploadTestData(file);
-		return Result.success();
-	}
+//	@PostMapping("data")
+//	public Result uploadTestData(@RequestParam MultipartFile file) {
+//		problemService.uploadTestData(file);
+//		return Result.success();
+//	}
 
 	@PutMapping
 	public Result update(@RequestBody Problem problem) {
@@ -62,9 +66,36 @@ public class ProblemController {
 	}
 
 	@GetMapping("/page")
-	public Result page(@RequestParam int pageNumber, @RequestParam int pageSize, @RequestBody ProblemPageDTO problemPageDTO) {
-		Page<Problem> problemPage = problemService.page(pageNumber, pageSize, problemPageDTO);
+	public Result page(@RequestParam int pageNumber, @RequestParam int pageSize, ProblemSearchDTO problemSearchDTO) {
+		Page<Problem> problemPage = problemService.page(pageNumber, pageSize, problemSearchDTO);
 		return Result.success(problemPage);
 	}
 
+//	@GetMapping("/list")
+//	public Result page2(ProblemSearchDTO problemSearchDTO) {
+//		var problemPage = problemService.pageWithStatus(problemSearchDTO);
+//		return Result.success(problemPage);
+//	}
+
+//	@GetMapping("/list2")
+//	public Result page3(ProblemSearchDTO problemSearchDTO) {
+//		var problemPage = problemService.pageWithStatus(problemSearchDTO);
+//		return Result.success(problemPage);
+//	}
+//
+//	@GetMapping("/page4")
+//	public Result page4(@RequestParam int pageNumber, @RequestParam int pageSize, ProblemSearchDTO problemSearchDTO) {
+//		Page<Problem> problemPage = problemService.pageWithStatus(pageNumber, pageSize, problemSearchDTO);
+//		return Result.success(problemPage);
+//	}
+
+	@GetMapping("/paged")
+	public Result<Page<ProblemUserDTO>> getPagedProblemUserDTOs(
+			@RequestParam int pageNumber,
+			@RequestParam int pageSize,
+			ProblemSearchDTO problemSearchDTO) {
+		// Fetch the paged data
+		var problemUserDTOPage = problemService.getPagedProblemUserDTO(pageNumber, pageSize, problemSearchDTO);
+		return Result.success(problemUserDTOPage);
+	}
 }

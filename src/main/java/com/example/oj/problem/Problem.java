@@ -3,6 +3,7 @@ package com.example.oj.problem;
 import com.example.oj.constant.ProblemVisibility;
 import com.example.oj.problemDetail.ProblemDetail;
 import com.example.oj.testcase.TestCase;
+import com.example.oj.userProblem.UserProblem;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -16,6 +17,7 @@ import org.hibernate.annotations.LazyToOneOption;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
@@ -25,7 +27,7 @@ import java.util.Set;
 @Entity
 @ToString(exclude = "testCases")
 @Table(name = "problem")
-@JsonIgnoreProperties(value = { "hibernateLazyInitializer" })
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 public class Problem {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,20 +42,25 @@ public class Problem {
 	@Column(name = "create_user")
 	Long createUser;
 	@CreationTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "create_time")
-	LocalDateTime createTime;
+	Calendar createTime;
 	@Column(name = "update_user")
 	Long updateUser;
 	@UpdateTimestamp
 	@Column(name = "update_time")
-	LocalDateTime updateTime;
+	@Temporal(TemporalType.TIMESTAMP)
+	Calendar updateTime;
 	@OneToOne(mappedBy = "problem", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
 	@PrimaryKeyJoinColumn
 	@LazyToOne(value = LazyToOneOption.NO_PROXY)
 	@JsonIgnore
 	ProblemDetail problemDetail;
 	@OneToMany(mappedBy = "problem", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	@JsonIgnore // Prevent serialization to avoid infinite recursion
+	@JsonIgnore
 	private List<TestCase> testCases;
 
+	@OneToMany(mappedBy = "id.problem", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<UserProblem> userProblems;
 }

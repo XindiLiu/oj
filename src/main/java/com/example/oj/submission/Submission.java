@@ -64,6 +64,8 @@ public class Submission {
 	String code;
 	@Column(name = "message")
 	String message;
+	@Column(name = "score")
+	Integer score;
 
 	public Submission() {
 	}

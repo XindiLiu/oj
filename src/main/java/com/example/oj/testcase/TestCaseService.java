@@ -93,16 +93,17 @@ public class TestCaseService {
 				testCase.setName(testCaseName);
 
 				// Copy valid in/out files to a permanent location
-//				Path newInputPath = testcasePath.resolve(testCaseName + ".in");
-//				fileService.copyFile(zipPath.resolve(testCaseName + ".in"), newInputPath);
-//				Path newOutputPath = testcasePath.resolve(testCaseName + ".out");
-//				fileService.copyFile(zipPath.resolve(testCaseName + ".out"), newOutputPath);
-//				testCase.setInputPath(newInputPath.toAbsolutePath().toString());
-//				testCase.setOutputPath(newOutputPath.toAbsolutePath().toString());
+				Path newInputPath = testcasePath.resolve(testCaseName + ".in");
+				fileService.copyFile(zipPath.resolve(testCaseName + ".in"), newInputPath);
+				Path newOutputPath = testcasePath.resolve(testCaseName + ".out");
+				fileService.copyFile(zipPath.resolve(testCaseName + ".out"), newOutputPath);
+				testCase.setInputPath(newInputPath.toAbsolutePath().toString());
+				testCase.setOutputPath(newOutputPath.toAbsolutePath().toString());
 
 				// USe the temp dir to store files
-				testCase.setInputPath(zipPath.resolve(testCaseName + ".in").toAbsolutePath().toString());
-				testCase.setOutputPath(zipPath.resolve(testCaseName + ".out").toAbsolutePath().toString());
+//				testCase.setInputPath(zipPath.resolve(testCaseName + ".in").toAbsolutePath().toString());
+//				testCase.setOutputPath(zipPath.resolve(testCaseName + ".out").toAbsolutePath().toString());
+
 				testCaseList.add(testCase);
 			}
 		}
