@@ -26,9 +26,10 @@ public class SubmissionSimple implements SubmissionSimpleProj {
 	Integer numPassedCases;
 
 	Integer totalCases;
+	Integer score;
 
 
-	public SubmissionSimple(Long id, Long userId, Long problemId, Calendar createTime, ProgrammingLanguage language, SubmissionStatus status, SubmissionResultType judgement, Long runTimeMs, Long memoryByte, Integer numPassedCases, Integer totalCases) {
+	public SubmissionSimple(Long id, Long userId, Long problemId, Calendar createTime, ProgrammingLanguage language, SubmissionStatus status, SubmissionResultType judgement, Long runTimeMs, Long memoryByte, Integer numPassedCases, Integer totalCases, Integer score) {
 		this.id = id;
 		this.problem = new ProblemSimple(problemId);
 		this.user = new UserSimple(userId);
@@ -40,6 +41,7 @@ public class SubmissionSimple implements SubmissionSimpleProj {
 		this.memoryByte = memoryByte;
 		this.numPassedCases = numPassedCases;
 		this.totalCases = totalCases;
+		this.score = score;
 	}
 
 	public SubmissionSimple() {

@@ -1,5 +1,6 @@
 package com.example.oj.config;
 
+import com.example.oj.constant.Role;
 import com.example.oj.interceptor.JwtAuthenticationFilter;
 import com.example.oj.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,16 +39,21 @@ public class WebSecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 				.csrf(csrf -> csrf.disable())
-				.authorizeRequests()
-				.requestMatchers("/register", "/login")
-				.permitAll()
-				.anyRequest()
-				.authenticated()
-				.and()
+				.authorizeHttpRequests(
+						(authorize) -> authorize.requestMatchers("/register", "/login")
+								.permitAll()
+								.anyRequest()
+								.permitAll()
+
+						// .authenticated()
+				)
+
+				// Set anonymous.disable() to make SecurityContextHolder.getContext().getAuthentication() return null
+				.anonymous((anonymous) -> anonymous
+						.authorities(Role.GUEST.role()))
 				.sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
 				.authenticationProvider(authenticationProvider)
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-		;
+				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}

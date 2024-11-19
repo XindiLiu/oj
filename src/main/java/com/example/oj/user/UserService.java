@@ -4,6 +4,7 @@ import com.example.oj.common.Result;
 //import com.example.oj.utils.JwtUtil;
 import com.example.oj.constant.Role;
 import com.example.oj.utils.JwtUtil;
+import com.example.oj.utils.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +13,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import java.security.Security;
 
 @Service
 @Slf4j
@@ -25,8 +28,7 @@ public class UserService {
 
 	public String login(UserLoginDTO userLogin) {
 		// Check if the user is already authenticated
-		if (SecurityContextHolder.getContext().getAuthentication() != null &&
-				SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+		if (!SecurityUtil.isGuest()) {
 			log.info("User is already logged in");
 			return null;
 		}

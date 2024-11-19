@@ -17,13 +17,13 @@ public interface SubmissionRepository
 
 	@Query("SELECT new com.example.oj.submission.SubmissionSimple(s.id, s.user.id, s.problem.id, s.createTime, s.language, s.status, "
 			+
-			"s.judgement, s.runTimeMs, s.memoryByte, s.numPassedCases, s.totalCases) " +
+			"s.judgement, s.runTimeMs, s.memoryByte, s.numPassedCases, s.totalCases, s.score) " +
 			"FROM Submission s WHERE s.id = :id")
 	SubmissionSimple findProblemSimpleById(Long id);
 
 	@Query("SELECT new com.example.oj.submission.SubmissionSimple(s.id, s.user.id, s.problem.id, s.createTime, s.language, s.status, "
 			+
-			"s.judgement, s.runTimeMs, s.memoryByte, s.numPassedCases, s.totalCases) " +
+			"s.judgement, s.runTimeMs, s.memoryByte, s.numPassedCases, s.totalCases, s.score) " +
 			"FROM Submission s WHERE s.user.id = :userId ORDER BY s.createTime DESC")
 	Page<SubmissionSimple> findSimpleByUserIdOrderByCreateTimeDesc(Long userId, Pageable pageable);
 
@@ -41,8 +41,8 @@ public interface SubmissionRepository
 	//	List<Submission> findByProblemIdAndStatusAndJudgementOrderByRunTimeMs(Long id, SubmissionStatus status, SubmissionResultType judgement, Sort sort, Limit limit);
 
 	Window<Submission> findFirst10ByProblemIdAndLanguageAndStatusAndJudgementOrderByRunTimeMs(Long id,
-			ProgrammingLanguage language, SubmissionStatus status, SubmissionResultType judgement,
-			OffsetScrollPosition position);
+																							  ProgrammingLanguage language, SubmissionStatus status, SubmissionResultType judgement,
+																							  OffsetScrollPosition position);
 
 	//    Submission getByUser(Long id);
 	//

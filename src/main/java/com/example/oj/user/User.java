@@ -11,11 +11,13 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -51,16 +53,19 @@ public class User implements UserDetails {
 	Role role;
 
 	@Override
+	@JsonIgnore
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return null;
+		return List.of(new SimpleGrantedAuthority(role.role()));
 	}
 
 	@Override
+	@JsonIgnore
 	public boolean isAccountNonExpired() {
 		return true;
 	}
 
 	@Override
+	@JsonIgnore
 	public boolean isAccountNonLocked() {
 		return true;
 	}
@@ -71,6 +76,7 @@ public class User implements UserDetails {
 	}
 
 	@Override
+	@JsonIgnore
 	public boolean isEnabled() {
 		return true;
 	}

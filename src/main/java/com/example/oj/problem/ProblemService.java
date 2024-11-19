@@ -1,6 +1,5 @@
 package com.example.oj.problem;
 
-import com.example.oj.common.Result;
 import com.example.oj.problemDetail.ProblemDetail;
 import com.example.oj.problemDetail.ProblemDetailRepository;
 import com.example.oj.user.User;
@@ -14,10 +13,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -46,7 +44,7 @@ public class ProblemService {
 
 	@Transactional
 	public void save(Problem problem) {
-		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		User user = SecurityUtil.getCurrentUser();
 		problem.setCreateUser(user.getId());
 		problem.setUpdateUser(user.getId());
 		problemRepository.save(problem);
@@ -54,7 +52,7 @@ public class ProblemService {
 
 	@Transactional
 	public void update(Problem problem) {
-		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		User user = SecurityUtil.getCurrentUser();
 		problem.setUpdateUser(user.getId());
 		problemRepository.save(problem);
 	}
@@ -100,22 +98,34 @@ public class ProblemService {
 //	}
 
 
-	public Page<ProblemUserDTO> getPagedProblemUserDTOs(int pageNumber, int pageSize, ProblemSearchDTO problemSearchDTO) {
-		// Convert pageNumber to zero-based index
-		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
-		// Build the specification based on search criteria
-		Specification<Problem> spec = ProblemSpecification.buildSpecification(problemSearchDTO);
-		// Retrieve the current user's ID (implement based on your security context)
-		User user = SecurityUtil.getCurrentUser();
-		// Fetch the paged data
-//		Page<ProblemUserDTO> problemUserDTOPage = userProblemService.getProblemUserDTOPage(user.getId(), spec, pageable);
-		Page<ProblemUserDTO> problemUserDTOPage = userProblemService.getProblemUserDTOPage2(user.getId(), problemSearchDTO, pageable);
-		return problemUserDTOPage;
+	//	public Page<ProblemUserDTO> getPagedProblemUserDTOs(int pageNumber, int pageSize, ProblemSearchDTO problemSearchDTO) {
+//		// Convert pageNumber to zero-based index
+//		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+//		// Build the specification based on search criteria
+//		Specification<Problem> spec = ProblemSpecification.buildSpecification(problemSearchDTO);
+//		// Retrieve the current user's ID (implement based on your security context)
+//		User user = SecurityUtil.getCurrentUser();
+//		// Fetch the paged data
+////		Page<ProblemUserDTO> problemUserDTOPage = userProblemService.getProblemUserDTOPage(user.getId(), spec, pageable);
+//		Page<ProblemUserDTO> problemUserDTOPage = userProblemService.getProblemUserDTOPage2(user.getId(), problemSearchDTO, pageable);
+//		return problemUserDTOPage;
+//	}
+	public Page<ProblemUserDTO> getPagedProblem(int pageNo, int pageSize, ProblemSearchDTO problemSearchDTO) {
+		var queryCondition = ProblemSpecification.buildSpecification(problemSearchDTO);
+		var problemResult = problemRepository.findAll(queryCondition, PageRequest.of(pageNo - 1, pageSize));
+		var result = problemResult.map((p) -> new ProblemUserDTO(p));
+		return result;
 	}
 
-	public Page<ProblemUserDTO> getPagedProblemUserDTO(int pageNumber, int pageSize, ProblemSearchDTO problemSearchDTO) {
+
+	public Page<ProblemUserDTO> getPagedProblemWithUser(int pageNumber, int pageSize, ProblemSearchDTO problemSearchDTO) {
 		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
-		Long userId = SecurityUtil.getCurrentUser().getId();
+		User user = SecurityUtil.getCurrentUser();
+		if (user == null) {
+			return getPagedProblem(pageNumber, pageSize, problemSearchDTO);
+		}
+		Long userId = user.getId();
+
 		// Fetch the paged data
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<ProblemUserDTO> query = cb.createQuery(ProblemUserDTO.class);

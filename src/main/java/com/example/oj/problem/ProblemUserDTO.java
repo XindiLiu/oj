@@ -1,7 +1,6 @@
 package com.example.oj.problem;
 
 import com.example.oj.constant.SubmissionResultType;
-import com.example.oj.userProblem.UserProblem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,9 +9,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProblemUserDTO {
-	Long problemId;
+	Long id;
 	String title;
 	Integer difficulty;
 	SubmissionResultType userStatus;
 	Integer highestScore;
+
+	public ProblemUserDTO(Problem problem) {
+		this.id = problem.getId();
+		this.title = problem.getTitle();
+		this.difficulty = problem.getDifficulty();
+		this.userStatus = null;
+		this.highestScore = null;
+	}
 }

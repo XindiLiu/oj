@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +26,7 @@ public class SubmissionController {
 	@Autowired
 	UserService userService;
 
+	@PreAuthorize("hasRole('USER')")
 	@PostMapping("problem/{id}/submit")
 	public Result<Submission> submit(@RequestBody SubmissionDTO submissionDTO, @PathVariable Long id) {
 		Submission submission = new Submission();
@@ -40,6 +43,8 @@ public class SubmissionController {
 		return Result.success(submissionResult);
 	}
 
+	@PreAuthorize("hasRole('USER')")
+	@PostAuthorize("@userSecurity.isCurrentUser(returnObject.data.getUser().getId())")
 	@GetMapping("submission/{id}")
 	//	@PreAuthorize("@userSecurity.isCurrentUser(#user.id)")
 	public Result getById(@PathVariable Long id) {

@@ -3,10 +3,7 @@ package com.example.oj.problem;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
-import com.example.oj.problem.ProblemUserDTO;
 
 import java.util.List;
 
@@ -17,7 +14,7 @@ public interface ProblemRepository extends CrudRepository<Problem, Long> {
 
 	ProblemSimplePorj findProblemSimpleById(Long id);
 
-//	Page<Problem> findAll(Specification<Problem> specification, Pageable pageable);
+//	Page<ProblemSimplePorj> findPagedProjectedBy(Specification<Problem> specification, Pageable pageable);
 
 	Page<Problem> findAll(Specification<Problem> specification, Pageable pageable);
 

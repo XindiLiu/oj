@@ -5,5 +5,8 @@ public enum Role {
 	MEMBER,
 	USER,
 	GUEST;
-
+	
+	public String role() {
+		return "ROLE_" + this.name();
+	}
 }

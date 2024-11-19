@@ -2,6 +2,7 @@ package com.example.oj.user;
 
 import com.example.oj.common.Result;
 import com.example.oj.utils.BeanCopyUtils;
+import com.example.oj.utils.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -84,6 +85,12 @@ public class UserController {
 		}
 		userService.update(currentUser);
 		return Result.success();
+	}
+
+	@GetMapping("/currentUser")
+	public Result currentUser() {
+
+		return Result.success(SecurityUtil.getCurrentUser());
 	}
 
 }

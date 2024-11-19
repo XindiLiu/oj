@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import com.example.oj.utils.SecurityUtil;
+
 @Service
 @Slf4j
 public class SubmissionService {
@@ -56,7 +58,7 @@ public class SubmissionService {
 	}
 
 	public Submission submit(Submission submission) {
-		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		User user = SecurityUtil.getCurrentUser();
 		submission.setUser(user);
 		submission.setStatus(SubmissionStatus.RUNNING);
 		Submission savedSubmission = submissionRepository.save(submission);

@@ -27,4 +27,6 @@ public interface SubmissionSimpleProj {
 	Integer getNumPassedCases();
 
 	Integer getTotalCases();
+
+	Integer getScore();
 }
