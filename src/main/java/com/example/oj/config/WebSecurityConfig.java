@@ -40,12 +40,13 @@ public class WebSecurityConfig {
 		http
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(
-						(authorize) -> authorize.requestMatchers("/register", "/login")
-								.permitAll()
+						(authorize) -> authorize
+								//								.requestMatchers("/register", "/login")
+								//								.permitAll()
 								.anyRequest()
 								.permitAll()
 
-						// .authenticated()
+				// .authenticated()
 				)
 
 				// Set anonymous.disable() to make SecurityContextHolder.getContext().getAuthentication() return null
@@ -53,7 +54,9 @@ public class WebSecurityConfig {
 						.authorities(Role.GUEST.role()))
 				.sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
 				.authenticationProvider(authenticationProvider)
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+				.logout(logout -> logout
+						.disable());
 
 		return http.build();
 	}

@@ -13,7 +13,7 @@ import java.util.Calendar;
 
 @Data
 @ToString
-public class SubmissionSimple implements SubmissionSimpleProj {
+public class SubmissionSimple {
 	Long id;
 	ProblemSimple problem;
 	UserSimple user;
@@ -29,10 +29,10 @@ public class SubmissionSimple implements SubmissionSimpleProj {
 	Integer score;
 
 
-	public SubmissionSimple(Long id, Long userId, Long problemId, Calendar createTime, ProgrammingLanguage language, SubmissionStatus status, SubmissionResultType judgement, Long runTimeMs, Long memoryByte, Integer numPassedCases, Integer totalCases, Integer score) {
+	public SubmissionSimple(Long id, Long userId, String userName, Long problemId, String problemTitle, Calendar createTime, ProgrammingLanguage language, SubmissionStatus status, SubmissionResultType judgement, Long runTimeMs, Long memoryByte, Integer numPassedCases, Integer totalCases, Integer score) {
 		this.id = id;
-		this.problem = new ProblemSimple(problemId);
-		this.user = new UserSimple(userId);
+		this.problem = new ProblemSimple(problemId, problemTitle);
+		this.user = new UserSimple(userId, userName);
 		this.createTime = createTime;
 		this.language = language;
 		this.status = status;

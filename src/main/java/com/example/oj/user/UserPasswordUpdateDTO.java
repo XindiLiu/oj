@@ -1,6 +1,5 @@
 package com.example.oj.user;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,8 +11,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class UserUpdateDTO implements Serializable {
+public class UserPasswordUpdateDTO implements Serializable {
 	public Long id;
-	public String name;
+	public String oldPassword;
+	public String newPassword;
 //    public Long score;
 }

@@ -174,7 +174,7 @@ public class FileService {
 //			fileType = Files.probeContentType(Paths.get(file.getOriginalFilename()));
 //			fileType = URLConnection.guessContentTypeFromStream(file.getInputStream());
 		String fileType = file.getContentType();
-		return fileType.equals("application/zip");
+		return fileType.equals("application/zip") || fileType.equals("application/x-zip-compressed");
 	}
 
 	public String type(MultipartFile file) {

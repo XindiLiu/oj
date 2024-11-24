@@ -9,12 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.security.Security;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -49,7 +49,6 @@ public class UserService {
 	}
 
 	public Result save(User user) {
-
 		User savedUser = null;
 		savedUser = userRepository.save(user);
 		if (savedUser == null) {
@@ -87,5 +86,31 @@ public class UserService {
 
 	public UserSimpleProj findUserSimpleById(Long id) {
 		return userRepository.findUserSimpleById(id);
+	}
+
+	@Transactional
+	public Result updatePassword(Long id, String oldPassword, String newPassword) {
+		String oldPasswordEncoded = userRepository.getPasswordById(id);
+		int code = 0;
+		if (passwordEncoder.matches(oldPassword, oldPasswordEncoded)) {
+			String newPasswordEncoded = passwordEncoder.encode(newPassword);
+			int nUpdatedRows = userRepository.updatePasswordById(id, newPasswordEncoded);
+			if (nUpdatedRows == 1) {
+				return Result.success();
+			} else {
+				return Result.fail("Unknown error", 2);
+			}
+		} else {
+			return Result.fail("Old password wrong", 1);
+		}
+	}
+
+	public boolean passwordCriteria(String password) {
+		return true;
+	}
+
+	public List rankList() {
+		var list = userRepository.findAllUsersOrderByScore();
+		return list;
 	}
 }

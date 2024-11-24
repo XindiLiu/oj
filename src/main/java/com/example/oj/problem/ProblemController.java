@@ -1,11 +1,11 @@
 package com.example.oj.problem;
 
 import com.example.oj.common.Result;
+import com.example.oj.exception.IdNotFoundException;
 import com.example.oj.problemDetail.ProblemDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,16 +16,31 @@ public class ProblemController {
 	ProblemService problemService;
 
 	//	@PreAuthorize("hasRole('USER')")
-	@PostMapping
-	public Result save(@RequestBody ProblemCreateDTO problemCreateDTO) {
-		Problem problem = new Problem();
-		ProblemDetail detail = new ProblemDetail();
+//	@PostMapping("/add")
+//	public Result save(@RequestBody ProblemCreateDTO problemCreateDTO) {
+//		Problem problem = new Problem();
+//		ProblemDetail detail = new ProblemDetail();
+//		BeanUtils.copyProperties(problemCreateDTO, problem);
+//		BeanUtils.copyProperties(problemCreateDTO, detail);
+//		problem.setProblemDetail(detail);
+//		detail.setProblem(problem);
+//		problemService.save(problem);
+//		return Result.success();
+//	}
+
+	@PostMapping("/add")
+	public Result add(@RequestBody ProblemCreateDTO problemCreateDTO) {
+		Problem problem = Problem.emptyProblem();
+		if (problemCreateDTO.getSampleIo() != null) {
+			var sampleList = problemCreateDTO.getSampleIo();
+			for (int i = 0; i < sampleList.size(); i++) {
+				sampleList.get(i).setSampleId(i + 1);
+			}
+		}
 		BeanUtils.copyProperties(problemCreateDTO, problem);
-		BeanUtils.copyProperties(problemCreateDTO, detail);
-		problem.setProblemDetail(detail);
-		detail.setProblem(problem);
-		problemService.save(problem);
-		return Result.success();
+		BeanUtils.copyProperties(problemCreateDTO, problem.getProblemDetail());
+		ProblemDetail problemDetail = problemService.add(problem);
+		return Result.success(problemDetail);
 	}
 
 	//	@PostMapping("data")
@@ -34,10 +49,21 @@ public class ProblemController {
 //		return Result.success();
 //	}
 //	@PreAuthorize("hasRole('USER')")
-	@PutMapping
-	public Result update(@RequestBody Problem problem) {
-		problemService.update(problem);
-		return Result.success();
+	@PostMapping("/update/{id}")
+	public Result update(@PathVariable Long id, @RequestBody ProblemCreateDTO problemCreateDTO) {
+		if (problemCreateDTO.getSampleIo() != null) {
+			var sampleList = problemCreateDTO.getSampleIo();
+			for (int i = 0; i < sampleList.size(); i++) {
+				sampleList.get(i).setSampleId(i + 1);
+			}
+		}
+		ProblemDetail problemDetail = null;
+		try {
+			problemDetail = problemService.update(id, problemCreateDTO);
+		} catch (IdNotFoundException e) {
+			return Result.fail("Problem does not exist");
+		}
+		return Result.success(problemDetail);
 	}
 
 	@GetMapping("/{id}")

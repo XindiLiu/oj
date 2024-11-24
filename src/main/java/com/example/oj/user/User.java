@@ -33,7 +33,6 @@ public class User implements UserDetails {
 	Long id;
 	@Column(name = "username", unique = true, nullable = false, updatable = false)
 	String username;
-
 	@Column(name = "password", nullable = false)
 	@JsonIgnore
 	String password;
@@ -50,6 +49,7 @@ public class User implements UserDetails {
 	// @Column(name = "last_login_time")
 	// Date lastLoginTime;
 	@Enumerated(EnumType.STRING)
+	@JsonIgnore
 	Role role;
 
 	@Override

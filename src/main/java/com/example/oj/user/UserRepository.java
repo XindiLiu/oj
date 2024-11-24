@@ -1,15 +1,14 @@
 package com.example.oj.user;
 
-import com.example.oj.submission.SubmissionSimple;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface UserRepository extends CrudRepository<User, Long>, PagingAndSortingRepository<User, Long> {
 	User save(User user);
@@ -35,5 +34,19 @@ public interface UserRepository extends CrudRepository<User, Long>, PagingAndSor
 	@Query("UPDATE User u SET u.score = u.score + :scoreDiff WHERE u.id = :id")
 	void incrementScore(Long id, Long scoreDiff);
 
-//	Page<SubmissionSimple> findSimpleByUserIdOrderByCreateTimeDesc(Long userId, Pageable pageable);
+	@Query("select u.password from User u where u.id = :id")
+	String getPasswordById(Long id);
+
+	@Modifying
+	@Query("update User u set u.password = :password where u.id = :id")
+	int updatePasswordById(Long id, String password);
+
+	//	@Modifying
+	//	@Query("update User u set u.password = :newPassword where u.id = :id and u.password = :oldPassword")
+	//	int updatePassword(Long id, String oldPassword, String newPassword);
+
+
+	@Query("SELECT u FROM User u ORDER BY u.score DESC")
+	List<User> findAllUsersOrderByScore();
+
 }

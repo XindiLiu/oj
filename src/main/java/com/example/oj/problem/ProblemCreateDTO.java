@@ -1,10 +1,13 @@
 package com.example.oj.problem;
 
 import com.example.oj.constant.ProblemVisibility;
+import com.example.oj.problemDetail.ProblemDetail;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -20,5 +23,6 @@ public class ProblemCreateDTO {
 	String sampleData;
 	Integer timeLimitSeconds;
 	Integer memoryLimitMB;
+	List<ProblemDetail.SamplePair> sampleIo;
 
 }

@@ -22,6 +22,7 @@ public class TestCase {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonIgnore
 	Integer testCaseId;
 
 	@Column(name = "name")
@@ -33,9 +34,11 @@ public class TestCase {
 	Problem problem;
 
 	@Column(name = "input_path")
+	@JsonIgnore
 	String inputPath;
 
 	@Column(name = "output_path")
+	@JsonIgnore
 	String outputPath;
 
 	// The weight in the calculation of the total score.

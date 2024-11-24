@@ -49,7 +49,10 @@ public class LocalDockeStdioCodeTester implements CodeTester {
 	public void test(Problem problem, Submission submission, Consumer<Submission> afterCodeTesting) {
 		submission = testSubmission(problem, submission);
 		log.info("test finished: {}", submission.getId());
-		afterCodeTesting.accept(submission);
+		if (submission.getStatus() != SubmissionStatus.FAILED && submission.getJudgement() != SubmissionResultType.JE) {
+			afterCodeTesting.accept(submission);
+		}
+
 		//		submissionService.afterCodeTesting(submission);
 	}
 
@@ -95,7 +98,7 @@ public class LocalDockeStdioCodeTester implements CodeTester {
 			List<Long> memory = new ArrayList<>(); // byte
 			List<String> exeCmd = List.of("docker", "run", "-i", "--rm", "-v", // Add -i to make the process wait for input
 					dockerMountFolder.toString() + ":/" + dockerWorkspace,
-					dockerImage, String.format("runner_stdio a.exe %d %d", timeLimit, memoryLimitMB));
+					dockerImage, String.format("runner_stdio a.exe %d %d", timeLimit * 1000, memoryLimitMB));
 
 			log.info("Running test cases, execution command: {}", String.join(" ", exeCmd));
 			//			List<TestCase> testCases = testCaseService.getByProblemId(problem.getId());

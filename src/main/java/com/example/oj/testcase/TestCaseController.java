@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-@Controller
+@RestController
 @Slf4j
 public class TestCaseController {
 	@Autowired
@@ -36,7 +36,7 @@ public class TestCaseController {
 		}
 	}
 
-	@GetMapping("/problem/{problemId}/testcases")
+	@GetMapping("/problem/{problemId}/testCases")
 	@ResponseBody
 	public Result<List<TestCase>> getByProblemId(@PathVariable Long problemId) {
 		//    public Result save(@RequestBody TestCase testCase){

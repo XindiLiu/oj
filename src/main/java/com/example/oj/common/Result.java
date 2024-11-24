@@ -1,70 +1,51 @@
 package com.example.oj.common;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
 
 @Data
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 //@ResponseBody
 public class Result<T> implements Serializable {
+	boolean success;
 	int code;
 	String msg;
 	T data;
 
-	public Result(int code, String msg, T data) {
-		this.code = code;
-		this.msg = msg;
-		this.data = data;
-	}
-
 	public static <T> Result<T> success(T data) {
-		return new Result(1, null, data);
+		return new Result(true, 0, null, data);
 	}
 
 	public static <T> Result<T> success() {
-		return new Result(1, null, null);
+		return new Result(true, 0, null, null);
+	}
+
+	public static <T> Result<T> fail() {
+		return new Result(false, 1, null, null);
+	}
+
+	public static <T> Result<T> fail(String msg, int code) {
+		return new Result(false, 1, null, null);
 	}
 
 	public static <T> Result<T> fail(String msg) {
-		return new Result(0, msg, null);
+		return new Result(false, 1, msg, null);
 	}
 
 	public static <T> Result<T> fail(T data, String msg) {
-		return new Result(0, msg, data);
+		return new Result(false, 1, msg, data);
 	}
 
-	@Override
-	public String toString() {
-		return "Result{" +
-				"code=" + code +
-				", msg='" + msg + '\'' +
-				", data=" + data +
-				'}';
+	public static <T> Result<T> fail(T data, String msg, int code) {
+		return new Result(false, code, msg, data);
 	}
 
-	public int getCode() {
-		return code;
-	}
-
-	public void setCode(int code) {
-		this.code = code;
-	}
-
-	public String getMsg() {
-		return msg;
-	}
-
-	public void setMsg(String msg) {
-		this.msg = msg;
-	}
-
-	public T getData() {
-		return data;
-	}
-
-	public void setData(T data) {
-		this.data = data;
-	}
 }

@@ -41,18 +41,21 @@ public class SubmissionService {
 
 	@Transactional
 	public void afterCodeTesting(Submission submission) {
-		// Calculate the score
-		double score = 0;
-		double weightSum = 0;
-		int i = 0;
-		for (TestCase testCase : submission.getProblem().getTestCases()) {
-			if (i < submission.getNumPassedCases()) {
-				score += testCase.getWeight();
+		if (submission.getStatus() == SubmissionStatus.FINISHED) {
+			double score = 0;
+			double weightSum = 0;
+			int i = 0;
+			for (TestCase testCase : submission.getProblem().getTestCases()) {
+				if (i < submission.getNumPassedCases()) {
+					score += testCase.getWeight();
+				}
+				weightSum += testCase.getWeight();
+				i++;
 			}
-			weightSum += testCase.getWeight();
-			i++;
+			submission.setScore(Integer.valueOf((int) ((score / weightSum) * 100)));
 		}
-		submission.setScore(Integer.valueOf((int) ((score / weightSum) * 100)));
+		// Calculate the score
+
 		submissionRepository.save(submission);
 		userProblemService.afterCodeTesting(submission);
 	}
@@ -89,8 +92,9 @@ public class SubmissionService {
 	//		//		return submission;
 	//	}
 
-	public Submission getById(Long id) {
-		Submission submission = submissionRepository.getById(id);
+	public SubmissionInfo getById(Long id) {
+		SubmissionInfo submission = submissionRepository.findSubmissionInfoById(id);
+//		Submission submission = submissionRepository.getById(id);
 		return submission;
 	}
 
@@ -132,12 +136,14 @@ public class SubmissionService {
 	//		return submission;
 	//
 	//	}
-	public List<Submission> getFastestByProblem(Long id, ProgrammingLanguage language) {
+	public List<SubmissionSimple> getFastestByProblem(Long id, ProgrammingLanguage language) {
 		//		List<Submission> submission = submissionRepository.findByProblemIdAndStatusAndJudgementOrderByRunTimeMs(id, SubmissionStatus.FINISHED, SubmissionResultType.AC, Sort.by("run_time").ascending(), Limit.of(limit));
-		List<Submission> submission = submissionRepository
-				.findFirst10ByProblemIdAndLanguageAndStatusAndJudgementOrderByRunTimeMs(id, language,
-						SubmissionStatus.FINISHED, SubmissionResultType.AC, ScrollPosition.offset())
-				.toList();
+		List<SubmissionSimple> submission = submissionRepository
+				.findFastes(id, language,
+//						SubmissionStatus.FINISHED, SubmissionResultType.AC, ScrollPosition.offset())
+						SubmissionStatus.FINISHED, SubmissionResultType.AC, PageRequest.of(0, 10))
+//				.toList()
+				;
 		return submission;
 	}
 

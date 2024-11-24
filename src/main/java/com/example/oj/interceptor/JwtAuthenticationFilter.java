@@ -4,6 +4,7 @@ import com.example.oj.common.Result;
 import com.example.oj.constant.SecurityConstants;
 import com.example.oj.utils.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -38,10 +39,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
-//		if (request.getServletPath().contains("login")) {
-//			filterChain.doFilter(request, response);
-//			return;
-//		}
+		//		if (request.getServletPath().contains("login")) {
+		//			filterChain.doFilter(request, response);
+		//			return;
+		//		}
 
 		// Extract token from request
 		String authHeader = request.getHeader(SecurityConstants.AUTH_HEADER);
@@ -67,7 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 					SecurityContextHolder.getContext().setAuthentication(authToken);
 				}
 			}
-		} catch (SignatureException e) {
+		} catch (SignatureException | MalformedJwtException e) {
 			log.error("Invalid JWT token, frontend remove the token from cookies: {}", e.getMessage());
 			Result result = Result.fail("SignatureException");
 			String responseBody = objectMapper.writeValueAsString(result);
@@ -76,6 +77,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			response.getWriter().write(responseBody);
 			return;
 		}
+
 		// Extract username from token
 
 		filterChain.doFilter(request, response);

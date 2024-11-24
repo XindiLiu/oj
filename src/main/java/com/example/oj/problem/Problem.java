@@ -7,14 +7,12 @@ import com.example.oj.userProblem.UserProblem;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.access.method.P;
 
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -23,9 +21,11 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor
 @Entity
-@ToString(exclude = "testCases")
+@ToString
 @Table(name = "problem")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 public class Problem {
@@ -33,7 +33,8 @@ public class Problem {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
-	@Column(name = "title", unique = true, nullable = false, updatable = false)
+	//	@Column(name = "title", unique = true, nullable = false, updatable = false)
+	@Column(name = "title")
 	String title;
 	@Column(name = "difficulty")
 	Integer difficulty;
@@ -53,7 +54,6 @@ public class Problem {
 	Calendar updateTime;
 	@OneToOne(mappedBy = "problem", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
 	@PrimaryKeyJoinColumn
-	@LazyToOne(value = LazyToOneOption.NO_PROXY)
 	@JsonIgnore
 	ProblemDetail problemDetail;
 	@OneToMany(mappedBy = "problem", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -63,4 +63,12 @@ public class Problem {
 	@OneToMany(mappedBy = "id.problem", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<UserProblem> userProblems;
+
+	public static Problem emptyProblem() {
+		Problem problem = new Problem();
+		problem.setProblemDetail(new ProblemDetail());
+		problem.getProblemDetail().setProblem(problem);
+		return problem;
+	}
+
 }

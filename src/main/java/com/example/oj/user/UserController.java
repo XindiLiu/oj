@@ -44,7 +44,7 @@ public class UserController {
 	}
 
 	@PostMapping("/logout")
-	public Result<String> logout() {
+	public Result logout() {
 		return Result.success();
 	}
 
@@ -72,7 +72,7 @@ public class UserController {
 		return Result.success(user);
 	}
 
-	@PutMapping("/user")
+	@PostMapping("/userUpdate")
 	@PreAuthorize("@userSecurity.isCurrentUser(#user.id)")
 	public Result update(@RequestBody UserUpdateDTO user) {
 		log.info("Update user info: {}", user);
@@ -87,10 +87,22 @@ public class UserController {
 		return Result.success();
 	}
 
+	@PostMapping("/userUpdatePassword")
+	@PreAuthorize("@userSecurity.isCurrentUser(#passwordDto.id)")
+	public Result updatePassword(@RequestBody UserPasswordUpdateDTO passwordDto) {
+		log.info("Update password: {}", passwordDto);
+		return userService.updatePassword(passwordDto.id, passwordDto.oldPassword, passwordDto.newPassword);
+	}
+
 	@GetMapping("/currentUser")
 	public Result currentUser() {
-
 		return Result.success(SecurityUtil.getCurrentUser());
+	}
+
+	@GetMapping("/user/rank")
+	public Result rankList() {
+		var ranklist = userService.rankList();
+		return Result.success(ranklist);
 	}
 
 }

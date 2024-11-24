@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.List;
+
 public interface SubmissionRepository
 		extends JpaRepository<Submission, Long>, PagingAndSortingRepository<Submission, Long> {
 
@@ -15,13 +17,15 @@ public interface SubmissionRepository
 	//    @Query("SELECT s.id,s.language, s.createTime from Submission s where s.id = :id")
 	Submission getById(Long id);
 
-	@Query("SELECT new com.example.oj.submission.SubmissionSimple(s.id, s.user.id, s.problem.id, s.createTime, s.language, s.status, "
+	@Query("SELECT new com.example.oj.submission.SubmissionSimple(s.id, s.user.id, s.user.name, s.problem.id, s.problem.title, s.createTime, s.language, s.status, "
 			+
 			"s.judgement, s.runTimeMs, s.memoryByte, s.numPassedCases, s.totalCases, s.score) " +
 			"FROM Submission s WHERE s.id = :id")
 	SubmissionSimple findProblemSimpleById(Long id);
 
-	@Query("SELECT new com.example.oj.submission.SubmissionSimple(s.id, s.user.id, s.problem.id, s.createTime, s.language, s.status, "
+	SubmissionInfo findSubmissionInfoById(Long id);
+
+	@Query("SELECT new com.example.oj.submission.SubmissionSimple(s.id, s.user.id, s.user.name, s.problem.id, s.problem.title, s.createTime, s.language, s.status, "
 			+
 			"s.judgement, s.runTimeMs, s.memoryByte, s.numPassedCases, s.totalCases, s.score) " +
 			"FROM Submission s WHERE s.user.id = :userId ORDER BY s.createTime DESC")
@@ -39,11 +43,17 @@ public interface SubmissionRepository
 	Page<Submission> findByProblemIdOrderByCreateTimeDesc(Long id, Pageable pageable);
 
 	//	List<Submission> findByProblemIdAndStatusAndJudgementOrderByRunTimeMs(Long id, SubmissionStatus status, SubmissionResultType judgement, Sort sort, Limit limit);
+	@Query("SELECT new com.example.oj.submission.SubmissionSimple(s.id, s.user.id, s.user.name, s.problem.id, s.problem.title, s.createTime, s.language, s.status, "
+			+
+			"s.judgement, s.runTimeMs, s.memoryByte, s.numPassedCases, s.totalCases, s.score) " +
+			"FROM Submission s WHERE s.problem.id = :id and s.language = :language and s.judgement=:judgement and s.status = :status ORDER BY s.runTimeMs ASC")
+	List<SubmissionSimple> findFastes(Long id,
+									  ProgrammingLanguage language, SubmissionStatus status, SubmissionResultType judgement,
+									  Pageable pageable);
 
-	Window<Submission> findFirst10ByProblemIdAndLanguageAndStatusAndJudgementOrderByRunTimeMs(Long id,
-																							  ProgrammingLanguage language, SubmissionStatus status, SubmissionResultType judgement,
-																							  OffsetScrollPosition position);
-
+	Window<SubmissionSimple> findFirst10ByProblemIdAndLanguageAndStatusAndJudgementOrderByRunTimeMs(Long id,
+																									ProgrammingLanguage language, SubmissionStatus status, SubmissionResultType judgement,
+																									OffsetScrollPosition position);
 	//    Submission getByUser(Long id);
 	//
 	//    Submission getByProblem(Long id);

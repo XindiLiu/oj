@@ -2,7 +2,6 @@ package com.example.oj.submission;
 
 import com.example.oj.common.Result;
 import com.example.oj.constant.ProgrammingLanguage;
-import com.example.oj.constant.SubmissionResultType;
 import com.example.oj.problem.Problem;
 import com.example.oj.problem.ProblemService;
 import com.example.oj.user.UserService;
@@ -14,8 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 public class SubmissionController {
@@ -48,7 +45,7 @@ public class SubmissionController {
 	@GetMapping("submission/{id}")
 	//	@PreAuthorize("@userSecurity.isCurrentUser(#user.id)")
 	public Result getById(@PathVariable Long id) {
-		Submission submission = submissionService.getById(id);
+		var submission = submissionService.getById(id);
 		//        SubmissionSimple submissionSimple = new SubmissionSimple();
 		//        BeanUtils.copyProperties(submission, submissionSimple);
 		return Result.success(submission);
@@ -56,7 +53,7 @@ public class SubmissionController {
 
 	@GetMapping("submission/simple/{id}")
 	public Result getSimpleById(@PathVariable Long id) {
-		SubmissionSimpleProj submissionSimple = submissionService.getSimpleById(id);
+		var submissionSimple = submissionService.getSimpleById(id);
 		return Result.success(submissionSimple);
 	}
 
@@ -68,10 +65,10 @@ public class SubmissionController {
 	//
 	@GetMapping("user/{id}/submissions")
 	public Result getAllByUserIdPage(@PathVariable Long id,
-									 @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
-									 @RequestParam(value = "size", defaultValue = "20", required = false) Integer size) {
+									 @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+									 @RequestParam(value = "pageSize", defaultValue = "20", required = false) Integer pageSize) {
 
-		Pageable pageable = PageRequest.of(page, size);
+		Pageable pageable = PageRequest.of(pageNumber, pageSize);
 		Page<SubmissionSimple> submissions = submissionService.getAllSubmissionsByUser(id, pageable);
 		return Result.success(submissions);
 	}
@@ -91,10 +88,10 @@ public class SubmissionController {
 		return Result.success(submission);
 	}
 
-	@GetMapping("/time_ranklist")
-	public Result getFastestByProblem(@RequestParam Long id, @RequestParam String lang) {
-		List<Submission> submission = submissionService.getFastestByProblem(id,
-				ProgrammingLanguage.valueOf(lang.toUpperCase()));
+	@GetMapping("problem/time_ranklist/{id}")
+	public Result getFastestByProblem(@PathVariable Long id, @RequestParam String language) {
+		var submission = submissionService.getFastestByProblem(id,
+				ProgrammingLanguage.valueOf(language.toUpperCase()));
 		return Result.success(submission);
 	}
 }
