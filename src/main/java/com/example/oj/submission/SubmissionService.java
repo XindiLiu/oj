@@ -1,6 +1,5 @@
 package com.example.oj.submission;
 
-import com.example.oj.annotation.AutoFill;
 import com.example.oj.codeTester.CodeTester;
 import com.example.oj.constant.ProgrammingLanguage;
 import com.example.oj.constant.SubmissionResultType;

@@ -1,7 +1,6 @@
 package com.example.oj.user;
 
 import com.example.oj.common.Result;
-//import com.example.oj.utils.JwtUtil;
 import com.example.oj.constant.Role;
 import com.example.oj.utils.JwtUtil;
 import com.example.oj.utils.SecurityUtil;
@@ -25,6 +24,8 @@ public class UserService {
 	AuthenticationManager authenticationManager;
 	@Autowired
 	PasswordEncoder passwordEncoder;
+	@Autowired
+	JwtUtil jwtUtil;
 
 	public String login(UserLoginDTO userLogin) {
 		// Check if the user is already authenticated
@@ -38,7 +39,7 @@ public class UserService {
 		authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(username, password));
 		User user = userRepository.findByUsername(username);
-		String jwt = JwtUtil.generateJWT(user);
+		String jwt = jwtUtil.generateJWT(user);
 		log.info("logged in as:{}", user.getId());
 		return jwt;
 

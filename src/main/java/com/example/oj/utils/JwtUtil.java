@@ -1,66 +1,46 @@
 package com.example.oj.utils;
 
-import com.example.oj.constant.SecurityConstants;
 import com.example.oj.user.User;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
-import java.util.Map;
 
 @Slf4j
+@Component
 public class JwtUtil {
 
-	private final static String keyBytes = "00000000000000000000000000000000";
-	private final static Key key = Keys.hmacShaKeyFor(keyBytes.getBytes());
+	private final Key key;
+	private final Long jwtExpire;
 
-	//	/**
-	//	 * 生成jwt
-	//	 * 使用Hs256算法, 私匙使用固定秘钥
-	//	 *
-	//	 * @param secretKey jwt秘钥
-	//	 * @param ttlMillis jwt过期时间(毫秒)
-	//	 * @param claims    设置的信息
-	//	 * @return
-	//	 */
-	//	public static String createJWT(String secretKey, long ttlMillis, Map<String, Object> claims) {
-	//		// 指定签名的时候使用的签名算法，也就是header那部分
-	//		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-	//
-	//		// 生成JWT的时间
-	//		long expMillis = System.currentTimeMillis() + ttlMillis;
-	//		Date exp = new Date(expMillis);
-	//
-	//		// 设置jwt的body
-	//		JwtBuilder builder = Jwts.builder()
-	//				// 如果有私有声明，一定要先设置这个自己创建的私有的声明，这个是给builder的claim赋值，一旦写在标准的声明赋值之后，就是覆盖了那些标准的声明的
-	//				.setClaims(claims)
-	//				// 设置签名使用的签名算法和签名使用的秘钥
-	//				.signWith(signatureAlgorithm, secretKey.getBytes(StandardCharsets.UTF_8))
-	//				// 设置过期时间
-	//				.setExpiration(exp);
-	//
-	//		return builder.compact();
-	//	}
-	public static String generateJWT(User user) {
-		log.info("{}", System.currentTimeMillis());
-		//        Key key = Keys.hmacShaKeyFor(keyBytes.getBytes());
+	public JwtUtil(@Value("${jwt.secret}") String secret,
+				   @Value("${jwt.expiration}") Long jwtExpire) {
+		this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+		this.jwtExpire = jwtExpire;
+	}
+
+	/**
+	 * Generate JWT
+	 *
+	 * @param user the user for whom the token is generated
+	 * @return the JWT string
+	 */
+	public String generateJWT(User user) {
+		log.info("Generating JWT at {}", System.currentTimeMillis());
 		String jwt = Jwts.builder()
 				.setHeaderParam("typ", "JWT")
 				.setHeaderParam("alg", "HS256")
 				.setSubject("user")
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.JWT_EXIPIRE))
+				.setExpiration(new Date(System.currentTimeMillis() + jwtExpire))
 				.claim("id", user.getId())
 				.claim("username", user.getUsername())
 				.signWith(key)
@@ -68,7 +48,13 @@ public class JwtUtil {
 		return jwt;
 	}
 
-	public static String getToken(HttpServletRequest request) {
+	/**
+	 * Extract token from the request cookies
+	 *
+	 * @param request the HTTP request
+	 * @return the token string if present, otherwise null
+	 */
+	public String getToken(HttpServletRequest request) {
 		if (request.getCookies() == null) {
 			return null;
 		}
@@ -80,70 +66,86 @@ public class JwtUtil {
 		return null;
 	}
 
-	public static Claims getClaims(String token) {
-
-		Key key = Keys.hmacShaKeyFor(keyBytes.getBytes());
+	/**
+	 * Get claims from the token
+	 *
+	 * @param token the JWT token
+	 * @return the Claims object
+	 */
+	public Claims getClaims(String token) {
 		Claims claims = Jwts.parser().setSigningKey(key).build().parseClaimsJws(token).getBody();
 		return claims;
-
-
 	}
 
-	public static Long getUserId(String token) {
+	/**
+	 * Get user ID from the token
+	 *
+	 * @param token the JWT token
+	 * @return the user ID
+	 */
+	public Long getUserId(String token) {
 		Claims claims = getClaims(token);
-		Integer idInt = (Integer) claims.get("id");
-		Long id = idInt.longValue();
-		return id;
+		Integer idInt = claims.get("id", Integer.class);
+		return idInt != null ? idInt.longValue() : null;
 	}
 
-	public static String getUsername(String token) {
+	/**
+	 * Get username from the token
+	 *
+	 * @param token the JWT token
+	 * @return the username
+	 */
+	public String getUsername(String token) {
 		Claims claims = getClaims(token);
-		String username = (String) claims.get("username");
-		return username;
+		return claims.get("username", String.class);
 	}
 
-	public static Date getExpireTime(String token) {
+	/**
+	 * Get token expiration time
+	 *
+	 * @param token the JWT token
+	 * @return the expiration date
+	 */
+	public Date getExpireTime(String token) {
 		Claims claims = getClaims(token);
-		Date expiration = claims.getExpiration();
-		return expiration;
+		return claims.getExpiration();
 	}
 
-	public static boolean isTokenNotExpired(String token) {
+	/**
+	 * Check if the token is not expired
+	 *
+	 * @param token the JWT token
+	 * @return true if not expired, false otherwise
+	 */
+	public boolean isTokenNotExpired(String token) {
 		return new Date().before(getExpireTime(token));
 	}
 
-	public static boolean isTokenValid(String token, UserDetails userDetails) {
+	/**
+	 * Validate the token against the user details
+	 *
+	 * @param token       the JWT token
+	 * @param userDetails the user details
+	 * @return true if valid, false otherwise
+	 */
+	public boolean isTokenValid(String token, UserDetails userDetails) {
 		final String username = getUsername(token);
 		return (username.equals(userDetails.getUsername())) && isTokenNotExpired(token);
 	}
 
-	public static Long getUserId(HttpServletRequest request) {
-
+	/**
+	 * Get user ID from the request
+	 *
+	 * @param request the HTTP request
+	 * @return the user ID if present, otherwise null
+	 */
+	public Long getUserId(HttpServletRequest request) {
 		try {
-			String token = JwtUtil.getToken(request);
-			Long id = JwtUtil.getUserId(token);
-			return id;
+			String token = getToken(request);
+			return getUserId(token);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-
-	/**
-	 * Token解密
-	 *
-	 * @param secretKey jwt秘钥 此秘钥一定要保留好在服务端, 不能暴露出去, 否则sign就可以被伪造, 如果对接多个客户端建议改造成多个
-	 * @param token     加密后的token
-	 * @return
-	 */
-	//	public static Claims parseJWT(String secretKey, String token) {
-	//		// 得到DefaultJwtParser
-	//		Claims claims = Jwts.parser()
-	//				// 设置签名的秘钥
-	//				.setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8))
-	//				// 设置需要解析的jwt
-	//				.parseClaimsJws(token).getBody();
-	//		return claims;
-	//	}
-
 }

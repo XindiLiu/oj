@@ -1,7 +1,6 @@
 package com.example.oj.interceptor;
 
 import com.example.oj.common.Result;
-import com.example.oj.constant.SecurityConstants;
 import com.example.oj.utils.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.MalformedJwtException;
@@ -12,55 +11,50 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.swing.table.TableRowSorter;
 import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
 	private final UserDetailsService userDetailsService;
 	private final ObjectMapper objectMapper;
+	@Autowired
+	JwtUtil jwtUtil;
+	@Value("${jwt.authHeader}")
+	String authHeader;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
-		//		if (request.getServletPath().contains("login")) {
-		//			filterChain.doFilter(request, response);
-		//			return;
-		//		}
+		String jwt = request.getHeader(authHeader);
 
-		// Extract token from request
-		String authHeader = request.getHeader(SecurityConstants.AUTH_HEADER);
-
-		if (authHeader == null) {
+		if (jwt == null) {
 			filterChain.doFilter(request, response);
 			return;
 		}
-		String jwt = authHeader;
 		try {
-			Long userId = JwtUtil.getUserId(jwt);
-			String username = JwtUtil.getUsername(jwt);
+			Long userId = jwtUtil.getUserId(jwt);
+			String username = jwtUtil.getUsername(jwt);
 			// Check if the user is not already authenticated
 			if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 				// Load user details from the database
 				UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 				// Validate the token and create an authentication token
-				if (JwtUtil.isTokenValid(jwt, userDetails)) {
+				if (jwtUtil.isTokenValid(jwt, userDetails)) {
 					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
 							userDetails, null, userDetails.getAuthorities());
 					authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -78,11 +72,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		// Extract username from token
-
 		filterChain.doFilter(request, response);
 	}
-
-	// Caused by JwtUtil.getClaims(), when the JWT token is invalid
-
 }

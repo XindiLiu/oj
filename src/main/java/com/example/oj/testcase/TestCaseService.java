@@ -38,7 +38,6 @@ public class TestCaseService {
 	@Value("${filesys.testCaseDir}")
 	Path testCasesPath;
 
-
 	@Transactional
 	public void save(@RequestBody TestCase testCase) {
 		testCaseRepository.save(testCase);
@@ -55,7 +54,6 @@ public class TestCaseService {
 	public void delete(Long testCaseId) {
 		testCaseRepository.deleteByTestCaseId(testCaseId);
 	}
-
 
 	@Transactional
 	public List<TestCase> saveTestCases(MultipartFile zipFile, Long problemId) throws IOException {
@@ -101,8 +99,8 @@ public class TestCaseService {
 				testCase.setOutputPath(newOutputPath.toAbsolutePath().toString());
 
 				// USe the temp dir to store files
-//				testCase.setInputPath(zipPath.resolve(testCaseName + ".in").toAbsolutePath().toString());
-//				testCase.setOutputPath(zipPath.resolve(testCaseName + ".out").toAbsolutePath().toString());
+				//				testCase.setInputPath(zipPath.resolve(testCaseName + ".in").toAbsolutePath().toString());
+				//				testCase.setOutputPath(zipPath.resolve(testCaseName + ".out").toAbsolutePath().toString());
 
 				testCaseList.add(testCase);
 			}
@@ -111,7 +109,7 @@ public class TestCaseService {
 		// Update database
 		testCaseRepository.deleteByProblemId(problemId);
 		testCaseRepository.saveAll(testCaseList);
-//		fileService.rmDir(zipPath);
+		//		fileService.rmDir(zipPath);
 		if (testCaseList.isEmpty()) {
 			return null;
 		} else {

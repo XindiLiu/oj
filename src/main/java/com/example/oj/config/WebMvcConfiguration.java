@@ -32,7 +32,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 import java.util.List;
 
 /**
- * 配置类，注册web层相关组件
+ * Configuration class, registers web layer related components
  */
 @Configuration
 @Slf4j
@@ -47,23 +47,19 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 	UserRepository userRepository;
 
 	//	/**
-	//	 * 注册自定义拦截器
+	//	 * Register custom interceptor
 	//	 *
 	//	 * @param registry
 	//	 */
 	//	protected void addInterceptors(InterceptorRegistry registry) {
-	//		log.info("开始注册自定义拦截器...");
+	//		log.info("Starting to register custom interceptors...");
 	//		registry.addInterceptor(jwtTokenAdminInterceptor)
-	////                .addPathPatterns("/**")
-	////                .excludePathPatterns("/**")
 	//				.excludePathPatterns("/register")
 	//				.excludePathPatterns("/login");
 	//	}
 	@Bean
 	public UserDetailsService userDetailsService() {
-		return username -> userRepository.findByUsername(username)
-		//                .orElseThrow(() -> new UsernameNotFoundException("User not found"))
-		;
+		return username -> userRepository.findByUsername(username);
 	}
 
 	@Override
@@ -102,7 +98,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 		return registrationBean;
 	}
 	//	/**
-	//	 * 设置静态资源映射
+	//	 * Set static resource mapping
 	//	 * @param registry
 	//	 */
 	//    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -112,7 +108,7 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 	//
 	//    @Override
 	//    protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-	//        log.info("拓展消息转换器");
+	//        log.info("Extending message converters");
 	//        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
 	//        converter.setObjectMapper(new JacksonObjectMapper());
 	//        converters.add(0, converter);
