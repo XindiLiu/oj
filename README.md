@@ -38,6 +38,7 @@ automatically tested against predefined test cases to validate correctness and p
 
 - **User Management:** Registration, authentication, and profile management.
 - **Problem Management:** Create, update, and manage programming problems with detailed descriptions and test cases.
+- **Problem Statistics:** Shows the fastest submissions for each problem and each language.
 - **Code Submission:** Users can submit code in multiple programming languages.
 - **Automated Testing:** Submissions are automatically compiled and executed within Docker containers to ensure isolated
   and secure evaluation.
@@ -45,7 +46,8 @@ automatically tested against predefined test cases to validate correctness and p
   metrics.
 - **Scalability:** Designed with a modular architecture to handle a large number of concurrent users and submissions.
 - **Caching** Caching frequently used data in the backend to reduce the number of queries to the database. (TODO)
-- **Leaderboard:** Track and display user rankings based on performance and scores. (TODO)
+- **Ranklist:** Ranklist of users ordered by scores.
+  
 
 ## Technologies Used
 
