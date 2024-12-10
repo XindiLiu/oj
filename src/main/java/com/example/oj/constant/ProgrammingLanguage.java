@@ -3,9 +3,9 @@ package com.example.oj.constant;
 public enum ProgrammingLanguage {
 	CPP("cpp"),
 	C("c");
-	public final String label;
+	public final String fileExtension;
 
-	private ProgrammingLanguage(String label) {
-		this.label = label;
+	private ProgrammingLanguage(String fileExtension) {
+		this.fileExtension = fileExtension;
 	}
 }

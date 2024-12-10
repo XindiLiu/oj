@@ -2,6 +2,7 @@ package com.example.oj.submission;
 
 import com.example.oj.common.Result;
 import com.example.oj.constant.ProgrammingLanguage;
+import com.example.oj.exception.IdNotFoundException;
 import com.example.oj.problem.Problem;
 import com.example.oj.problem.ProblemService;
 import com.example.oj.user.UserService;
@@ -25,15 +26,18 @@ public class SubmissionController {
 
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("problem/{id}/submit")
-	public Result<Submission> submit(@RequestBody SubmissionDTO submissionDTO, @PathVariable Long id) {
+	public Result<Submission> submit(@RequestBody SubmissionDTO submissionDTO, @PathVariable Long id) throws IdNotFoundException {
 		Submission submission = new Submission();
 		submission.setLanguage(ProgrammingLanguage.valueOf(submissionDTO.getLanguage()));
 		BeanUtils.copyProperties(submissionDTO, submission);
 
 		if (submission.getFileName() == null || submission.getFileName().isEmpty()) {
-			submission.setFileName("unnamed." + submission.getLanguage().label);
+			submission.setFileName("unnamed." + submission.getLanguage().fileExtension);
 		}
 		Problem problem = problemService.getById(id);
+		if (problem == null) {
+			throw new IdNotFoundException(Problem.class, id);
+		}
 		submission.setProblem(problem);
 		submission.setStatus(SubmissionStatus.SUBMITTED);
 		Submission submissionResult = submissionService.submit(submission);

@@ -1,11 +1,14 @@
 package com.example.oj.user;
 
 import com.example.oj.common.Result;
+import com.example.oj.exception.AlreadyLoggedInException;
+import com.example.oj.exception.IdNotFoundException;
 import com.example.oj.utils.BeanCopyUtils;
 import com.example.oj.utils.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
@@ -28,6 +31,9 @@ public class UserController {
 			jwt = userService.login(userLogin);
 		} catch (AuthenticationException e) {
 			return Result.fail("Invalid username or password.");
+		} catch (AlreadyLoggedInException e) {
+			// Should not happen. Handled by front end.
+			return Result.fail("Already logged in.");
 		}
 		//		if (result.getCode() == 1) {
 		//			User user = (User) result.getData();
@@ -47,15 +53,15 @@ public class UserController {
 	}
 
 	@PostMapping("/register")
-	public Result register(@RequestBody User user) {
+	public Result register(@RequestBody UserLoginDTO userRegister) {
+		User user = new User();
+		BeanUtils.copyProperties(userRegister, user);
 		User savedUser = userService.register(user);
-		//		user.setPassword(MD5Utils.md5(user.getPassword()));
 		if (savedUser == null) {
 			return Result.fail("Username exist");
 		} else {
 			return Result.success(savedUser);
 		}
-
 	}
 
 	@GetMapping("/user/{id}")
@@ -72,12 +78,16 @@ public class UserController {
 
 	@PostMapping("/userUpdate")
 	@PreAuthorize("@userSecurity.isCurrentUser(#user.id)")
-	public Result update(@RequestBody UserUpdateDTO user) {
+	public Result update(@RequestBody UserUpdateDTO user) throws IdNotFoundException {
 		log.info("Update user info: {}", user);
 		User currentUser;
-		if (user.id != null) {
-			currentUser = userService.getById(user.id);
-			BeanCopyUtils.copyNonNullSrcProperties(user, currentUser);
+		if (user.getId() != null) {
+			currentUser = userService.getById(user.getId());
+			if (currentUser != null) { // Should not happen with preauthorize.
+				BeanCopyUtils.copyNonNullSrcProperties(user, currentUser);
+			} else {
+				throw new IdNotFoundException(User.class, user.getId());
+			}
 		} else {
 			return Result.fail("No user id");
 		}
@@ -87,7 +97,7 @@ public class UserController {
 
 	@PostMapping("/userUpdatePassword")
 	@PreAuthorize("@userSecurity.isCurrentUser(#passwordDto.id)")
-	public Result updatePassword(@RequestBody UserPasswordUpdateDTO passwordDto) {
+	public Result updatePassword(@RequestBody UserPasswordUpdateDTO passwordDto) throws IdNotFoundException {
 		log.info("Update password: {}", passwordDto);
 		return userService.updatePassword(passwordDto.id, passwordDto.oldPassword, passwordDto.newPassword);
 	}

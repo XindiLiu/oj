@@ -40,7 +40,11 @@
         <!--            <artifactId>jackson-databind</artifactId>-->
         <!--            <version>2.18.1</version>-->
         <!--        </dependency>-->
-
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
@@ -154,50 +158,6 @@
 
     <build>
         <plugins>
-            <!--            <plugin>-->
-            <!--                <groupId>org.springframework.boot</groupId>-->
-            <!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-            <!--            </plugin>-->
-
-            <!--            <plugin> &lt;!&ndash; https://mvnrepository.com/artifact/com.github.eirslett/frontend-maven-plugin &ndash;&gt;-->
-            <!--                <groupId>com.github.eirslett</groupId>-->
-            <!--                <artifactId>frontend-maven-plugin</artifactId>-->
-            <!--                <version>1.6</version>-->
-            <!--                <configuration>-->
-            <!--&lt;!&ndash;                    <installDirectory>target</installDirectory>  &lt;!&ndash; 该插件的安装位置 &ndash;&gt;&ndash;&gt;-->
-            <!--                    &lt;!&ndash; webpack的工作目录，所有的配置文件/package.json/component/js及all所有和react有关的文件都在这个目录里存放 &ndash;&gt;-->
-            <!--                    <workingDirectory>src/main/resources/js</workingDirectory>-->
-            <!--                </configuration>-->
-            <!--            <executions>-->
-            <!--                <execution>-->
-            <!--                    <id>install node and npm</id> &lt;!&ndash; webpack必须有node支持 &ndash;&gt;-->
-            <!--                    <goals>-->
-            <!--                        <goal>install-node-and-npm</goal>-->
-            <!--                    </goals>-->
-            <!--                    <configuration>-->
-            <!--                        <nodeVersion>v4.4.5</nodeVersion>-->
-            <!--                        <npmVersion>3.9.2</npmVersion>-->
-            <!--                    </configuration>-->
-            <!--                </execution>-->
-            <!--                <execution>-->
-            <!--                    <id>npm install</id>-->
-            <!--                    <goals>-->
-            <!--                        <goal>npm</goal>-->
-            <!--                    </goals>-->
-            <!--                    <configuration>-->
-            <!--                        <arguments>install</arguments>-->
-            <!--                    </configuration>-->
-            <!--                </execution>-->
-            <!--                <execution>-->
-            <!--                    <id>webpack build</id> &lt;!&ndash; webpack build &ndash;&gt;-->
-            <!--                    <goals>-->
-            <!--                        <goal>webpack</goal>-->
-            <!--                    </goals>-->
-            <!--                </execution>-->
-            <!--            </executions>-->
-            <!--            </plugin>-->
-
-
         </plugins>
     </build>
 

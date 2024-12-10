@@ -13,25 +13,32 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Result> handleAccessDeniedException(AccessDeniedException ex) {
-        log.warn("Access denied: {}", ex.getMessage());
-        Result result = Result.fail("Access Denied: " + ex.getMessage());
-        return new ResponseEntity<>(result, HttpStatus.FORBIDDEN);
-    }
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<Result> handleAccessDeniedException(AccessDeniedException ex) {
+		log.warn("Access denied: {}", ex.getMessage());
+		Result result = Result.fail("Access Denied: " + ex.getMessage());
+		return new ResponseEntity<>(result, HttpStatus.FORBIDDEN);
+	}
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<Result> handleBadCredentialsException(BadCredentialsException ex) {
-        log.warn("Bad credentials: {}", ex.getMessage());
-        Result result = Result.fail("Invalid username or password.");
-        return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
-    }
+	@ExceptionHandler(BadCredentialsException.class)
+	public ResponseEntity<Result> handleBadCredentialsException(BadCredentialsException ex) {
+		log.warn("Bad credentials: {}", ex.getMessage());
+		Result result = Result.fail("Invalid username or password.");
+		return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
+	}
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Result> handleException(Exception ex) {
-        log.error("An unexpected error occurred: ", ex);
-        ex.printStackTrace();
-        Result result = Result.fail("An unexpected error occurred: " + ex.getMessage());
-        return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<Result> handleException(Exception ex) {
+		log.error("An unexpected error occurred: ", ex);
+		ex.printStackTrace();
+		Result result = Result.fail("An unexpected error occurred: " + ex.getMessage());
+		return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(IdNotFoundException.class)
+	public ResponseEntity<Result> handleIdNotFoundException(IdNotFoundException ex) {
+		log.error("Entity not found: {}", ex);
+		Result result = Result.fail(ex.getMessage());
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 }

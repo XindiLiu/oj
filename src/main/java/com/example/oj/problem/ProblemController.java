@@ -50,19 +50,14 @@ public class ProblemController {
 //	}
 //	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/update/{id}")
-	public Result update(@PathVariable Long id, @RequestBody ProblemCreateDTO problemCreateDTO) {
+	public Result update(@PathVariable Long id, @RequestBody ProblemCreateDTO problemCreateDTO) throws IdNotFoundException {
 		if (problemCreateDTO.getSampleIo() != null) {
 			var sampleList = problemCreateDTO.getSampleIo();
 			for (int i = 0; i < sampleList.size(); i++) {
 				sampleList.get(i).setSampleId(i + 1);
 			}
 		}
-		ProblemDetail problemDetail = null;
-		try {
-			problemDetail = problemService.update(id, problemCreateDTO);
-		} catch (IdNotFoundException e) {
-			return Result.fail("Problem does not exist");
-		}
+		ProblemDetail problemDetail = problemService.update(id, problemCreateDTO);
 		return Result.success(problemDetail);
 	}
 

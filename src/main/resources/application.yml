@@ -8,6 +8,9 @@ spring:
     driverClassName: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/oj_db
     username: root
+    #    driverClassName: org.postgresql.Driver
+    #    url: jdbc:postgresql://localhost:5432/oj-db-postgresql
+    #    username: postgres
     password: 1234
     type: com.alibaba.druid.pool.DruidDataSource
   jpa:
@@ -17,6 +20,7 @@ spring:
     properties:
       hibernate:
         enable_lazy_load_no_trans: true
+  #    database: postgresql
   security:
     enable-csrf: false
 
@@ -28,3 +32,6 @@ jwt:
   secret: "00000000000000000000000000000000"
   expiration: 22896000000
   authHeader: "Authorization"
+
+frontend:
+  address: "http://localhost:3000"

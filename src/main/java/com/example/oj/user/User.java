@@ -24,7 +24,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @DynamicUpdate
 public class User implements UserDetails {
 	@Id

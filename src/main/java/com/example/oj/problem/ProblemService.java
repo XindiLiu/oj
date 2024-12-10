@@ -85,20 +85,20 @@ public class ProblemService {
 	////        problemRepository.save(problem);
 	//	}
 
-	public Page<Problem> page(int pageNo, int pageSize, ProblemSearchDTO problemSearchDTO) {
-		Specification<Problem> queryCondition = ProblemSpecification.buildSpecification(problemSearchDTO);
-		try {
-			var result = problemRepository.findAll(queryCondition,
-					PageRequest.of(pageNo, pageSize));
-			return result;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+//	public Page<Problem> page(int pageNo, int pageSize, ProblemSearchDTO problemSearchDTO) {
+//		Specification<Problem> queryCondition = ProblemSpecification.buildSpecification(problemSearchDTO);
+//		try {
+//			var result = problemRepository.findAll(queryCondition,
+//					PageRequest.of(pageNo, pageSize));
+//			return result;
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return null;
+//		}
+//	}
 
-	public void uploadTestData(MultipartFile file) {
-	}
+//	public void uploadTestData(MultipartFile file) {
+//	}
 
 	public ProblemSimplePorj getSimpleById(Long id) {
 		return problemRepository.findProblemSimpleById(id);
@@ -131,7 +131,7 @@ public class ProblemService {
 	//	}
 	public Page<ProblemUserDTO> getPagedProblem(int pageNo, int pageSize, ProblemSearchDTO problemSearchDTO) {
 		var queryCondition = ProblemSpecification.buildSpecification(problemSearchDTO);
-		var problemResult = problemRepository.findAll(queryCondition, PageRequest.of(pageNo - 1, pageSize));
+		var problemResult = problemRepository.findAll(queryCondition, PageRequest.of(pageNo, pageSize));
 		var result = problemResult.map((p) -> new ProblemUserDTO(p));
 		return result;
 	}

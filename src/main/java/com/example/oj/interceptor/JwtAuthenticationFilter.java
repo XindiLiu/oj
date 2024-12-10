@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		String jwt = request.getHeader(authHeader);
 
-		if (jwt == null) {
+		if (jwt == null || request.getRequestURI().equals("/login")) {
 			filterChain.doFilter(request, response);
 			return;
 		}

@@ -8,6 +8,7 @@ import com.example.oj.mapper.JacksonObjectMapper;
 import com.example.oj.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -62,11 +63,14 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 		return username -> userRepository.findByUsername(username);
 	}
 
+	@Value("${frontend.address}")
+	private String frontendAddress;
+
 	@Override
-	protected void addCorsMappings(CorsRegistry registry) {
+	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
-				.allowedOrigins("http://localhost:3000")
-				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+				.allowedOrigins(frontendAddress)
+				.allowedMethods("GET", "POST", "PUT", "DELETE")
 				.allowedHeaders("*")
 				.allowCredentials(true);
 	}
