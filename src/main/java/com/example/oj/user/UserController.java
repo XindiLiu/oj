@@ -47,6 +47,7 @@ public class UserController {
 		return Result.success(jwt);
 	}
 
+	// Handled by front end.
 	@PostMapping("/logout")
 	public Result logout() {
 		return Result.success();
@@ -76,6 +77,9 @@ public class UserController {
 		return Result.success(user);
 	}
 
+	/*
+	 * Update user profile.
+	 */
 	@PostMapping("/userUpdate")
 	@PreAuthorize("@userSecurity.isCurrentUser(#user.id)")
 	public Result update(@RequestBody UserUpdateDTO user) throws IdNotFoundException {
@@ -102,11 +106,18 @@ public class UserController {
 		return userService.updatePassword(passwordDto.id, passwordDto.oldPassword, passwordDto.newPassword);
 	}
 
+	/*
+	 * Get current user by the token in the request header.
+	 */
 	@GetMapping("/currentUser")
 	public Result currentUser() {
 		return Result.success(SecurityUtil.getCurrentUser());
 	}
 
+	/*
+	 * Rank all users by score. 
+	 * TODO: Add limit
+	 */
 	@GetMapping("/user/rank")
 	public Result rankList() {
 		var ranklist = userService.rankList();

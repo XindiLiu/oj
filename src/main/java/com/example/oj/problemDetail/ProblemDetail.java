@@ -20,9 +20,12 @@ import java.util.Set;
 @Entity
 @ToString
 @Table(name = "problem_detail")
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
+@JsonIgnoreProperties(value = { "hibernateLazyInitializer" })
 @DynamicUpdate // Use dynamic update. Otherwise not changed columns will be overwritten.
 @DynamicInsert // Use dynamic update. Otherwise column default value won't work.
+/*
+ * Description of the problem.
+ */
 public class ProblemDetail {
 	@Id
 	Long id;

@@ -3,20 +3,18 @@ package com.example.oj.submission;
 import com.example.oj.codeTester.CodeTester;
 import com.example.oj.constant.ProgrammingLanguage;
 import com.example.oj.constant.SubmissionResultType;
+import com.example.oj.exception.CodeTesterUnavailableException;
+import com.example.oj.exception.CodeTestingException;
 import com.example.oj.problem.ProblemRepository;
 import com.example.oj.problem.ProblemSimplePorj;
 import com.example.oj.testcase.TestCase;
 import com.example.oj.user.User;
 import com.example.oj.user.UserRepository;
 import com.example.oj.user.UserSimpleProj;
-import com.example.oj.userProblem.UserProblem;
-import com.example.oj.userProblem.UserProblemService;
+import com.example.oj.userProblem.UserProblemResultService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,10 +34,11 @@ public class SubmissionService {
 	@Autowired
 	CodeTester codeTester;
 	@Autowired
-	UserProblemService userProblemService;
+	UserProblemResultService userProblemResultService;
 
 	@Transactional
 	public void afterCodeTesting(Submission submission) {
+		// Calculate the score if testing finished normally.
 		if (submission.getStatus() == SubmissionStatus.FINISHED) {
 			double score = 0;
 			double weightSum = 0;
@@ -53,20 +52,18 @@ public class SubmissionService {
 			}
 			submission.setScore(Integer.valueOf((int) ((score / weightSum) * 100)));
 		}
-		// Calculate the score
 
 		submissionRepository.save(submission);
-		userProblemService.afterCodeTesting(submission);
+		userProblemResultService.afterCodeTesting(submission);
 	}
 
-	public Submission submit(Submission submission) {
+	public Submission submit(Submission submission) throws CodeTesterUnavailableException, CodeTestingException {
 		User user = SecurityUtil.getCurrentUser();
 		submission.setUser(user);
 		submission.setStatus(SubmissionStatus.RUNNING);
 		Submission savedSubmission = submissionRepository.save(submission);
-		codeTester.test(submission.getProblem(), submission, this::afterCodeTesting);
 		// Run code testing async. 
-		//		runCodeTesting(savedSubmission);
+		codeTester.test(submission.getProblem(), savedSubmission, this::afterCodeTesting);
 		return savedSubmission;
 	}
 
@@ -93,7 +90,7 @@ public class SubmissionService {
 
 	public SubmissionInfo getById(Long id) {
 		SubmissionInfo submission = submissionRepository.findSubmissionInfoById(id);
-//		Submission submission = submissionRepository.getById(id);
+		//		Submission submission = submissionRepository.getById(id);
 		return submission;
 	}
 
@@ -104,13 +101,13 @@ public class SubmissionService {
 				.findProblemSimpleById(submissionSimple.getProblem().getId());
 		UserSimpleProj userSimpleProj = userRepository.findUserSimpleById(submissionSimple.getUser().getId());
 		submissionSimple.getProblem().setTitle(problemSimplePorj.getTitle());
-		submissionSimple.getUser().setName(userSimpleProj.getName());
+		submissionSimple.getUser().setName(userSimpleProj.getDisplayName());
 		return submissionSimple;
 	}
 
 	//    public String getCodeById(Long id) {
 	//        String submission = submissionRepository.getCodeById(id);
-	//        return submission;
+	//        return submission; 
 	//    }
 	//
 	public Page<SubmissionSimple> getAllSubmissionsByUser(Long id, Pageable pageable) {
@@ -139,9 +136,9 @@ public class SubmissionService {
 		//		List<Submission> submission = submissionRepository.findByProblemIdAndStatusAndJudgementOrderByRunTimeMs(id, SubmissionStatus.FINISHED, SubmissionResultType.AC, Sort.by("run_time").ascending(), Limit.of(limit));
 		List<SubmissionSimple> submission = submissionRepository
 				.findFastes(id, language,
-//						SubmissionStatus.FINISHED, SubmissionResultType.AC, ScrollPosition.offset())
+						//						SubmissionStatus.FINISHED, SubmissionResultType.AC, ScrollPosition.offset())
 						SubmissionStatus.FINISHED, SubmissionResultType.AC, PageRequest.of(0, 10))
-//				.toList()
+				//				.toList()
 				;
 		return submission;
 	}

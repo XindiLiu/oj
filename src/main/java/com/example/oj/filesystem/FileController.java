@@ -12,6 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @RestController
 @RequestMapping("/file")
+/*
+ * Not used
+ */
 public class FileController {
 	@Autowired
 	FileService fileService;

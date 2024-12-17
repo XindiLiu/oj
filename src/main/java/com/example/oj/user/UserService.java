@@ -35,7 +35,7 @@ public class UserService {
 		if (!SecurityUtil.isGuest()) {
 			log.info("User is already logged in");
 			throw new AlreadyLoggedInException();
-//			return null;
+			//			return null;
 		}
 
 		String username = userLogin.getUsername();
@@ -53,16 +53,16 @@ public class UserService {
 		return;
 	}
 
-//	public Result save(User user) {
-//		User savedUser = null;
-//		savedUser = userRepository.save(user);
-//		if (savedUser == null) {
-//			return Result.fail("Registration failed");
-//		} else {
-//			//            user.setPassword("******");
-//			return Result.success(savedUser);
-//		}
-//	}
+	//	public Result save(User user) {
+	//		User savedUser = null;
+	//		savedUser = userRepository.save(user);
+	//		if (savedUser == null) {
+	//			return Result.fail("Registration failed");
+	//		} else {
+	//			//            user.setPassword("******");
+	//			return Result.success(savedUser);
+	//		}
+	//	}
 
 	public User getById(@PathVariable Long id) {
 		User user = userRepository.getUserById(id);
@@ -100,7 +100,7 @@ public class UserService {
 			throw new IdNotFoundException(User.class, id);
 		}
 		String oldPasswordEncoded = user.getPassword();
-//		String oldPasswordEncoded = userRepository.getPasswordById(id);
+		//		String oldPasswordEncoded = userRepository.getPasswordById(id);
 		if (passwordEncoder.matches(oldPassword, oldPasswordEncoded)) {
 			String newPasswordEncoded = passwordEncoder.encode(newPassword);
 			int nUpdatedRows = userRepository.updatePasswordById(id, newPasswordEncoded);
@@ -113,10 +113,6 @@ public class UserService {
 			return Result.fail("Old password wrong", 1);
 		}
 	}
-
-//	public boolean passwordCriteria(String password) {
-//		return true;
-//	}
 
 	public List rankList() {
 		var list = userRepository.findAllUsersOrderByScore();

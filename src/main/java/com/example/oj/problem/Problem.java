@@ -3,21 +3,16 @@ package com.example.oj.problem;
 import com.example.oj.constant.ProblemVisibility;
 import com.example.oj.problemDetail.ProblemDetail;
 import com.example.oj.testcase.TestCase;
-import com.example.oj.userProblem.UserProblem;
+import com.example.oj.userProblem.UserProblemResult;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.security.access.method.P;
 
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -62,7 +57,7 @@ public class Problem {
 
 	@OneToMany(mappedBy = "id.problem", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnore
-	private List<UserProblem> userProblems;
+	private List<UserProblemResult> userProblemResults;
 
 	public static Problem emptyProblem() {
 		Problem problem = new Problem();

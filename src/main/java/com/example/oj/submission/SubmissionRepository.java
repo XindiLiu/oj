@@ -17,7 +17,7 @@ public interface SubmissionRepository
 	//    @Query("SELECT s.id,s.language, s.createTime from Submission s where s.id = :id")
 	Submission getById(Long id);
 
-	@Query("SELECT new com.example.oj.submission.SubmissionSimple(s.id, s.user.id, s.user.name, s.problem.id, s.problem.title, s.createTime, s.language, s.status, "
+	@Query("SELECT new com.example.oj.submission.SubmissionSimple(s.id, s.user.id, s.user.displayName, s.problem.id, s.problem.title, s.createTime, s.language, s.status, "
 			+
 			"s.judgement, s.runTimeMs, s.memoryByte, s.numPassedCases, s.totalCases, s.score) " +
 			"FROM Submission s WHERE s.id = :id")
@@ -25,7 +25,7 @@ public interface SubmissionRepository
 
 	SubmissionInfo findSubmissionInfoById(Long id);
 
-	@Query("SELECT new com.example.oj.submission.SubmissionSimple(s.id, s.user.id, s.user.name, s.problem.id, s.problem.title, s.createTime, s.language, s.status, "
+	@Query("SELECT new com.example.oj.submission.SubmissionSimple(s.id, s.user.id, s.user.displayName, s.problem.id, s.problem.title, s.createTime, s.language, s.status, "
 			+
 			"s.judgement, s.runTimeMs, s.memoryByte, s.numPassedCases, s.totalCases, s.score) " +
 			"FROM Submission s WHERE s.user.id = :userId ORDER BY s.createTime DESC")
@@ -43,7 +43,7 @@ public interface SubmissionRepository
 	Page<Submission> findByProblemIdOrderByCreateTimeDesc(Long id, Pageable pageable);
 
 	//	List<Submission> findByProblemIdAndStatusAndJudgementOrderByRunTimeMs(Long id, SubmissionStatus status, SubmissionResultType judgement, Sort sort, Limit limit);
-	@Query("SELECT new com.example.oj.submission.SubmissionSimple(s.id, s.user.id, s.user.name, s.problem.id, s.problem.title, s.createTime, s.language, s.status, "
+	@Query("SELECT new com.example.oj.submission.SubmissionSimple(s.id, s.user.id, s.user.displayName, s.problem.id, s.problem.title, s.createTime, s.language, s.status, "
 			+
 			"s.judgement, s.runTimeMs, s.memoryByte, s.numPassedCases, s.totalCases, s.score) " +
 			"FROM Submission s WHERE s.problem.id = :id and s.language = :language and s.judgement=:judgement and s.status = :status ORDER BY s.runTimeMs ASC")

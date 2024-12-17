@@ -16,6 +16,9 @@ import java.util.Enumeration;
 
 @Slf4j
 @Component
+/*
+ * Log http requests and responses.
+*/
 public class LoggingFilter extends OncePerRequestFilter {
 
 	@Override
@@ -25,17 +28,13 @@ public class LoggingFilter extends OncePerRequestFilter {
 		ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(request);
 		ContentCachingResponseWrapper wrappedResponse = new ContentCachingResponseWrapper(response);
 
+		logRequest(wrappedRequest);
+
 		long startTime = System.currentTimeMillis();
 		filterChain.doFilter(wrappedRequest, wrappedResponse);
 		long duration = System.currentTimeMillis() - startTime;
 
-		// Log request details
-		logRequest(wrappedRequest);
-
-		// Log response details
 		logResponse(wrappedResponse, duration);
-
-		// Copy content of response back to original response
 		wrappedResponse.copyBodyToResponse();
 	}
 
@@ -52,12 +51,12 @@ public class LoggingFilter extends OncePerRequestFilter {
 		}
 
 		// Log headers
-//        Enumeration<String> headerNames = request.getHeaderNames();
-//        msg.append("\nHeaders: ");
-//        while (headerNames.hasMoreElements()) {
-//            String headerName = headerNames.nextElement();
-//            msg.append(headerName).append("=").append(request.getHeader(headerName)).append(", ");
-//        }
+		//        Enumeration<String> headerNames = request.getHeaderNames();
+		//        msg.append("\nHeaders: ");
+		//        while (headerNames.hasMoreElements()) {
+		//            String headerName = headerNames.nextElement();
+		//            msg.append(headerName).append("=").append(request.getHeader(headerName)).append(", ");
+		//        }
 
 		// Log body
 		byte[] content = request.getContentAsByteArray();
@@ -76,11 +75,11 @@ public class LoggingFilter extends OncePerRequestFilter {
 				.append(", Time Taken=").append(duration).append("ms");
 
 		// Log headers
-//        Collection<String> headerNames = response.getHeaderNames();
-//        msg.append("\nHeaders: ");
-//        for (String headerName : headerNames) {
-//            msg.append(headerName).append("=").append(response.getHeader(headerName)).append(", ");
-//        }
+		//        Collection<String> headerNames = response.getHeaderNames();
+		//        msg.append("\nHeaders: ");
+		//        for (String headerName : headerNames) {
+		//            msg.append(headerName).append("=").append(response.getHeader(headerName)).append(", ");
+		//        }
 
 		// Log body
 		byte[] content = response.getContentAsByteArray();

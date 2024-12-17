@@ -129,6 +129,7 @@ public class JwtUtil {
 	 * @return true if valid, false otherwise
 	 */
 	public boolean isTokenValid(String token, UserDetails userDetails) {
+		if (userDetails == null) return false;
 		final String username = getUsername(token);
 		return (username.equals(userDetails.getUsername())) && isTokenNotExpired(token);
 	}

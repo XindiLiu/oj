@@ -23,7 +23,7 @@ import java.util.Calendar;
 @DynamicUpdate
 @DynamicInsert
 @Table(name = "submission")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Submission {
 
 	@Id
@@ -59,12 +59,16 @@ public class Submission {
 	@Column(name = "total_cases")
 	Integer totalCases;
 	@Column(name = "file_name", updatable = false)
+	// The name of the file uploaded by the user.
 	String fileName;
 	@Column(name = "code", updatable = false)
+	// The code uploaded by the user.
 	String code;
 	@Column(name = "message")
+	// Some compile error message in case of compilation error.
 	String message;
 	@Column(name = "score")
+	// The score of the submission. A number between 0 and 100.
 	Integer score;
 
 	public Submission() {

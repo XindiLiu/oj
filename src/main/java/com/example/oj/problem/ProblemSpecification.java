@@ -1,7 +1,7 @@
 package com.example.oj.problem;
 
 import com.example.oj.constant.SubmissionResultType;
-import com.example.oj.userProblem.UserProblem;
+import com.example.oj.userProblem.UserProblemResult;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -72,7 +72,7 @@ public class ProblemSpecification {
 	public static Specification<Problem> buildSpecificationWithUser(ProblemSearchDTO dto, Long userId) {
 		Specification<Problem> problemSpec = buildSpecification(dto);
 		Specification<Problem> problemSpecWithUser = (root, query, cb) -> {
-			Join<Problem, UserProblem> up = root.join("userProblems", JoinType.LEFT);
+			Join<Problem, UserProblemResult> up = root.join("userProblems", JoinType.LEFT);
 			up.on(cb.equal(up.get("id").get("user").get("id"), userId));
 			Predicate predicate = cb.conjunction();
 			Predicate specPredicate = problemSpec.toPredicate(root, query, cb);

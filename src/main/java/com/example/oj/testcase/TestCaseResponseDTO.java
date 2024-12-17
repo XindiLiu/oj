@@ -18,11 +18,9 @@ public class TestCaseResponseDTO {
 	Integer weight;
 
 	public TestCaseResponseDTO(TestCase testCase) {
-		String inputFileName = Paths.get(testCase.getInputPath()).getFileName().toString();
-		String outputFileName = Paths.get(testCase.getOutputPath()).getFileName().toString();
 		this.number = testCase.testCaseId;
-		this.inputFileName = inputFileName;
-		this.outputFileName = outputFileName;
+		this.inputFileName = testCase.getName() + ".in";
+		this.outputFileName = testCase.getName() + ".out";
 		this.weight = testCase.getWeight();
 	}
 

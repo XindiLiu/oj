@@ -27,6 +27,9 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+/*
+ * Set the authentication token in the SecurityContext for the current user.
+ */
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final UserDetailsService userDetailsService;
@@ -62,7 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 					SecurityContextHolder.getContext().setAuthentication(authToken);
 				}
 			}
-		} catch (SignatureException | MalformedJwtException e) {
+		} catch (SignatureException | MalformedJwtException e) { // Token with invalid format.
 			log.error("Invalid JWT token, frontend remove the token from cookies: {}", e.getMessage());
 			Result result = Result.fail("SignatureException");
 			String responseBody = objectMapper.writeValueAsString(result);

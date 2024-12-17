@@ -4,7 +4,6 @@ package com.example.oj.config;
 
 import com.example.oj.interceptor.JwtTokenAdminInterceptor;
 import com.example.oj.interceptor.LoggingFilter;
-import com.example.oj.mapper.JacksonObjectMapper;
 import com.example.oj.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

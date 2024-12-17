@@ -20,6 +20,9 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(result, HttpStatus.FORBIDDEN);
 	}
 
+	/*
+	 * Not used
+	 */
 	@ExceptionHandler(BadCredentialsException.class)
 	public ResponseEntity<Result> handleBadCredentialsException(BadCredentialsException ex) {
 		log.warn("Bad credentials: {}", ex.getMessage());

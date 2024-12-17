@@ -16,17 +16,17 @@ public class ProblemController {
 	ProblemService problemService;
 
 	//	@PreAuthorize("hasRole('USER')")
-//	@PostMapping("/add")
-//	public Result save(@RequestBody ProblemCreateDTO problemCreateDTO) {
-//		Problem problem = new Problem();
-//		ProblemDetail detail = new ProblemDetail();
-//		BeanUtils.copyProperties(problemCreateDTO, problem);
-//		BeanUtils.copyProperties(problemCreateDTO, detail);
-//		problem.setProblemDetail(detail);
-//		detail.setProblem(problem);
-//		problemService.save(problem);
-//		return Result.success();
-//	}
+	//	@PostMapping("/add")
+	//	public Result save(@RequestBody ProblemCreateDTO problemCreateDTO) {
+	//		Problem problem = new Problem();
+	//		ProblemDetail detail = new ProblemDetail();
+	//		BeanUtils.copyProperties(problemCreateDTO, problem);
+	//		BeanUtils.copyProperties(problemCreateDTO, detail);
+	//		problem.setProblemDetail(detail);
+	//		detail.setProblem(problem);
+	//		problemService.save(problem);
+	//		return Result.success();
+	//	}
 
 	@PostMapping("/add")
 	public Result add(@RequestBody ProblemCreateDTO problemCreateDTO) {
@@ -44,13 +44,14 @@ public class ProblemController {
 	}
 
 	//	@PostMapping("data")
-//	public Result uploadTestData(@RequestParam MultipartFile file) {
-//		problemService.uploadTestData(file);
-//		return Result.success();
-//	}
-//	@PreAuthorize("hasRole('USER')")
+	//	public Result uploadTestData(@RequestParam MultipartFile file) {
+	//		problemService.uploadTestData(file);
+	//		return Result.success();
+	//	}
+	//	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/update/{id}")
-	public Result update(@PathVariable Long id, @RequestBody ProblemCreateDTO problemCreateDTO) throws IdNotFoundException {
+	public Result update(@PathVariable Long id, @RequestBody ProblemCreateDTO problemCreateDTO)
+			throws IdNotFoundException {
 		if (problemCreateDTO.getSampleIo() != null) {
 			var sampleList = problemCreateDTO.getSampleIo();
 			for (int i = 0; i < sampleList.size(); i++) {
@@ -65,14 +66,17 @@ public class ProblemController {
 	public Result getById(@PathVariable Long id) {
 		Problem problem = problemService.getById(id);
 		problem.setProblemDetail(null);
-//        problem.getProblemDetail();
+		//        problem.getProblemDetail();
 		return Result.success(problem);
 	}
 
+	/*
+	 * Full description of a problem.
+	 */
 	@GetMapping("/detail/{id}")
 	public Result getDetailById(@PathVariable Long id) {
 		ProblemDetail problem = problemService.getDetailById(id);
-//        problem.getProblemDetail();
+		//        problem.getProblemDetail();
 		return Result.success(problem);
 	}
 
@@ -82,32 +86,36 @@ public class ProblemController {
 		return Result.success(problem);
 	}
 
-//	@GetMapping("/page")
-//	public Result page(@RequestParam int pageNumber, @RequestParam int pageSize, ProblemSearchDTO problemSearchDTO) {
-//		Page<Problem> problemPage = problemService.page(pageNumber, pageSize, problemSearchDTO);
-//		return Result.success(problemPage);
-//	}
+	//	@GetMapping("/page")
+	//	public Result page(@RequestParam int pageNumber, @RequestParam int pageSize, ProblemSearchDTO problemSearchDTO) {
+	//		Page<Problem> problemPage = problemService.page(pageNumber, pageSize, problemSearchDTO);
+	//		return Result.success(problemPage);
+	//	}
 
-//	@GetMapping("/list")
-//	public Result page2(ProblemSearchDTO problemSearchDTO) {
-//		var problemPage = problemService.pageWithStatus(problemSearchDTO);
-//		return Result.success(problemPage);
-//	}
+	//	@GetMapping("/list")
+	//	public Result page2(ProblemSearchDTO problemSearchDTO) {
+	//		var problemPage = problemService.pageWithStatus(problemSearchDTO);
+	//		return Result.success(problemPage);
+	//	}
 
 	//	@GetMapping("/list2")
-//	public Result page3(ProblemSearchDTO problemSearchDTO) {
-//		var problemPage = problemService.pageWithStatus(problemSearchDTO);
-//		return Result.success(problemPage);
-//	}
-//
-//	@GetMapping("/page4")
-//	public Result page4(@RequestParam int pageNumber, @RequestParam int pageSize, ProblemSearchDTO problemSearchDTO) {
-//		var problemPage = problemService.getPagedProblem(pageNumber, pageSize, problemSearchDTO);
-//		return Result.success(problemPage);
-//	}
+	//	public Result page3(ProblemSearchDTO problemSearchDTO) {
+	//		var problemPage = problemService.pageWithStatus(problemSearchDTO);
+	//		return Result.success(problemPage);
+	//	}
+	//
+	//	@GetMapping("/page4")
+	//	public Result page4(@RequestParam int pageNumber, @RequestParam int pageSize, ProblemSearchDTO problemSearchDTO) {
+	//		var problemPage = problemService.getPagedProblem(pageNumber, pageSize, problemSearchDTO);
+	//		return Result.success(problemPage);
+	//	}
 
+	/*
+	 * Get paged problems with UserProblemResult.
+	 */
 	@GetMapping("/page")
-	public Result getPagedProblemUserDTOs(@RequestParam int pageNumber, @RequestParam int pageSize, ProblemSearchDTO problemSearchDTO) {
+	public Result getPagedProblemUserDTOs(@RequestParam int pageNumber, @RequestParam int pageSize,
+			ProblemSearchDTO problemSearchDTO) {
 		// Fetch the paged data
 		var problemUserDTOPage = problemService.getPagedProblemWithUser(pageNumber, pageSize, problemSearchDTO);
 		return Result.success(problemUserDTOPage);

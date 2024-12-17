@@ -4,8 +4,8 @@ import com.example.oj.exception.IdNotFoundException;
 import com.example.oj.problemDetail.ProblemDetail;
 import com.example.oj.problemDetail.ProblemDetailRepository;
 import com.example.oj.user.User;
-import com.example.oj.userProblem.UserProblem;
-import com.example.oj.userProblem.UserProblemService;
+import com.example.oj.userProblem.UserProblemResult;
+import com.example.oj.userProblem.UserProblemResultService;
 import com.example.oj.utils.BeanCopyUtils;
 import com.example.oj.utils.SecurityUtil;
 import jakarta.persistence.EntityManager;
@@ -14,9 +14,7 @@ import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,7 +25,7 @@ public class ProblemService {
 	@Autowired
 	ProblemDetailRepository detailRepository;
 	@Autowired
-	UserProblemService userProblemService;
+	UserProblemResultService userProblemResultService;
 	@PersistenceContext
 	EntityManager entityManager;
 
@@ -149,7 +147,7 @@ public class ProblemService {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<ProblemUserDTO> query = cb.createQuery(ProblemUserDTO.class);
 		Root<Problem> problem = query.from(Problem.class);
-		Join<Problem, UserProblem> upJoin = problem.join("userProblems", JoinType.LEFT);
+		Join<Problem, UserProblemResult> upJoin = problem.join("userProblems", JoinType.LEFT);
 		upJoin.on(cb.equal(upJoin.get("id").get("user").get("id"), userId));
 		Predicate predicate = ProblemSpecification.buildSpecificationWithUser(problemSearchDTO, userId)
 				.toPredicate(problem, query, cb);
@@ -169,7 +167,7 @@ public class ProblemService {
 		// Count query for PageImpl
 		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
 		Root<Problem> countRoot = countQuery.from(Problem.class);
-		Join<Problem, UserProblem> countJoin = countRoot.join("userProblems", JoinType.LEFT);
+		Join<Problem, UserProblemResult> countJoin = countRoot.join("userProblems", JoinType.LEFT);
 		countJoin.on(cb.equal(countJoin.get("id").get("user").get("id"), userId));
 
 		Predicate countPredicate = ProblemSpecification.buildSpecificationWithUser(problemSearchDTO, userId)
