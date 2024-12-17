@@ -51,9 +51,9 @@ automatically tested against predefined test cases to validate correctness and p
 
 ## Technologies Used
 
-- **Backend:** Java, Spring Boot, Spring Data JPA, Hibernate
+- **Backend:** Java 17, Spring Boot 3, Spring Data JPA, Hibernate
 - **Frontend:** React
-- **Database:** MySQL
+- **Database:** PostgresSQL
 - **Containerization:** Docker
 - **Authentication:** Spring Security
 - **Build Tools:** Maven
