@@ -1,12 +1,9 @@
 package com.example.oj.filesystem;
 
-import com.example.oj.exception.InvalidTestCaseFileException;
-
 import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,8 +22,6 @@ import java.util.zip.ZipInputStream;
 public class FileService {
 	@Autowired
 	FileConfig fileConfig;
-	@Autowired
-	Tika tika;
 	public final static String inputFileExtension = "in";
 	public final static String outputFileExtension = "out";
 
@@ -137,7 +132,7 @@ public class FileService {
 		} catch (IOException e) {
 			log.error("Error removing dir {}: {}", dir, e.getMessage());
 			throw new IOException(e);
-//			return false;
+			//			return false;
 		}
 	}
 
@@ -151,16 +146,6 @@ public class FileService {
 		}
 	}
 
-	public boolean isZip(Path path) {
-		String fileType = null;
-		try {
-			fileType = tika.detect(path);
-		} catch (IOException e) {
-			log.warn("Could not determine MIME type for file: {}", path.toString());
-			return false;
-		}
-		return fileType.equals("application/zip");
-	}
 
 	public boolean isZip(MultipartFile file) {
 
@@ -170,84 +155,11 @@ public class FileService {
 		 * URLConnection.guessContentTypeFromStream() does not work
 		 * file.getContentType() does not throw IOException
 		 */
-//			fileType = tika.detect(file.getInputStream());
-//			fileType = Files.probeContentType(Paths.get(file.getOriginalFilename()));
-//			fileType = URLConnection.guessContentTypeFromStream(file.getInputStream());
+		//			fileType = tika.detect(file.getInputStream());
+		//			fileType = Files.probeContentType(Paths.get(file.getOriginalFilename()));
+		//			fileType = URLConnection.guessContentTypeFromStream(file.getInputStream());
 		String fileType = file.getContentType();
 		return fileType.equals("application/zip") || fileType.equals("application/x-zip-compressed");
-	}
-
-	public String type(MultipartFile file) {
-		File dir = new File("data");
-
-		if (!dir.exists()) {
-			dir.mkdirs();
-		}
-		dir = new File(dir.getAbsolutePath() + File.separator + file.getName());
-		try {
-			file.transferTo(dir);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
-		String mimeType = null;
-		try {
-			mimeType = tika.detect(dir);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		return mimeType;
-	}
-
-	/**
-	 * Requirements:
-	 * 1. The file is a zip file
-	 * 2. The file contains no directory
-	 * 3. All entries are plain text files
-	 * 4. Input and output files must appear in pairs, input files have extension .in and output files have extension .out.
-	 * 5. The size of the file is less or equal to 50 MB.
-	 */
-	@SneakyThrows
-	public Set<ZipEntry> getValidTestCases(Path zipFile) throws IOException {
-		File unzipDestinationDir = new File(zipFile.toString() + ".unzip");
-		unzipDestinationDir.mkdir();
-		ZipFile zip = new ZipFile(zipFile.toString());
-
-		Map<String, ZipEntry> entryParingMap = new HashMap<>();
-		Set<ZipEntry> pairedTestCase = new HashSet<>();
-		var entries = zip.entries();
-
-		while (entries.hasMoreElements()) {
-			ZipEntry entry = entries.nextElement();
-			InputStream zipEntryInput = null;
-			String entryName = entry.getName();
-			String extension = FilenameUtils.getExtension(entryName).toLowerCase();
-			String baseName = FilenameUtils.getBaseName(entryName).toLowerCase();
-
-			// Check directories
-			if (FilenameUtils.indexOfLastSeparator(entryName) != -1) {
-				throw new InvalidTestCaseFileException("Zip file contains directories");
-			}
-
-			// Check file type
-			zipEntryInput = zip.getInputStream(entry);
-			String fileType = tika.detect(zipEntryInput);
-			if (!fileType.equals("text/plain")) {
-				continue;
-				//                    throw new RuntimeException("File type not supported");
-			}
-			if (!extension.equals(inputFileExtension) && !extension.equals(outputFileExtension)) {
-				continue;
-			}
-			if (entryParingMap.containsKey(baseName)) {
-				pairedTestCase.add(entryParingMap.get(baseName));
-				pairedTestCase.add(entry);
-			} else {
-				entryParingMap.put(baseName, entry);
-			}
-		}
-		return pairedTestCase;
-
 	}
 
 	public void saveFile(MultipartFile file, Path path) {
@@ -259,7 +171,7 @@ public class FileService {
 		// TODO: better exception handling
 	}
 
-	@Transactional
+	@Transactional //?
 	public Path extractZip(MultipartFile zipFile) throws IOException {
 
 		Path tempDir = null;
@@ -284,7 +196,7 @@ public class FileService {
 		} catch (IOException e) {
 			log.error("Error extracting ZIP file: {}", e.getMessage());
 			throw new IOException(e);
-//			throw new RuntimeException("Error extracting zip", e);
+			//			throw new RuntimeException("Error extracting zip", e);
 		}
 		return tempDir;
 

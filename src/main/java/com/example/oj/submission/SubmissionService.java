@@ -6,7 +6,7 @@ import com.example.oj.constant.SubmissionResultType;
 import com.example.oj.exception.CodeTesterUnavailableException;
 import com.example.oj.exception.CodeTestingException;
 import com.example.oj.problem.ProblemRepository;
-import com.example.oj.problem.ProblemSimplePorj;
+import com.example.oj.problem.ProblemSimpleProj;
 import com.example.oj.testcase.TestCase;
 import com.example.oj.user.User;
 import com.example.oj.user.UserRepository;
@@ -67,42 +67,22 @@ public class SubmissionService {
 		return savedSubmission;
 	}
 
-	//	@Transactional
-	//	public void runCodeTesting(Submission submission) {
-	//		try {
-	//			// Update the submission status to RUNNING
-	//			submission.setStatus(SubmissionStatus.RUNNING);
-	//			submissionRepository.save(submission);
-	//			Submission testedSubmission = codeTester.test(submission.getProblem(), submission);
-	//			BeanUtils.copyProperties(testedSubmission, submission, "id", "problem", "user", "createTime", "code",
-	//					"fileName", "language");
-	//			submissionRepository.save(submission);
-	//		} catch (Exception e) {
-	//			submission.setStatus(SubmissionStatus.FAILED);
-	//			submission.setJudgement(SubmissionResultType.JE);
-	//			submission.setMessage("Error on code testing");
-	//			submissionRepository.save(submission);
-	//			log.error("Error on code testing:{}", e.getMessage());
-	//			//			throw new RuntimeException(e);
-	//		}
-	//		//		return submission;
-	//	}
 
-	public SubmissionInfo getById(Long id) {
-		SubmissionInfo submission = submissionRepository.findSubmissionInfoById(id);
+	public SubmissionFullDTOProj getById(Long id) {
+		SubmissionFullDTOProj submission = submissionRepository.findSubmissionInfoById(id);
 		//		Submission submission = submissionRepository.getById(id);
 		return submission;
 	}
 
 	@Transactional
-	public SubmissionSimple getSimpleById(Long id) {
-		SubmissionSimple submissionSimple = submissionRepository.findProblemSimpleById(id);
-		ProblemSimplePorj problemSimplePorj = problemRepository
-				.findProblemSimpleById(submissionSimple.getProblem().getId());
-		UserSimpleProj userSimpleProj = userRepository.findUserSimpleById(submissionSimple.getUser().getId());
-		submissionSimple.getProblem().setTitle(problemSimplePorj.getTitle());
-		submissionSimple.getUser().setName(userSimpleProj.getDisplayName());
-		return submissionSimple;
+	public SubmissionSimpleDTO getSimpleById(Long id) {
+		SubmissionSimpleDTO submissionSimpleDTO = submissionRepository.findProblemSimpleById(id);
+		ProblemSimpleProj problemSimpleProj = problemRepository
+				.findProblemSimpleById(submissionSimpleDTO.getProblem().getId());
+		UserSimpleProj userSimpleProj = userRepository.findUserSimpleById(submissionSimpleDTO.getUser().getId());
+		submissionSimpleDTO.getProblem().setTitle(problemSimpleProj.getTitle());
+		submissionSimpleDTO.getUser().setDisplayName(userSimpleProj.getDisplayName());
+		return submissionSimpleDTO;
 	}
 
 	//    public String getCodeById(Long id) {
@@ -110,8 +90,8 @@ public class SubmissionService {
 	//        return submission; 
 	//    }
 	//
-	public Page<SubmissionSimple> getAllSubmissionsByUser(Long id, Pageable pageable) {
-		Page<SubmissionSimple> submissions = submissionRepository.findSimpleByUserIdOrderByCreateTimeDesc(id, pageable);
+	public Page<SubmissionSimpleDTO> getAllSubmissionsByUser(Long id, Pageable pageable) {
+		Page<SubmissionSimpleDTO> submissions = submissionRepository.findSimpleByUserIdOrderByCreateTimeDesc(id, pageable);
 		return submissions;
 	}
 
@@ -132,9 +112,9 @@ public class SubmissionService {
 	//		return submission;
 	//
 	//	}
-	public List<SubmissionSimple> getFastestByProblem(Long id, ProgrammingLanguage language) {
+	public List<SubmissionSimpleDTO> getFastestByProblem(Long id, ProgrammingLanguage language) {
 		//		List<Submission> submission = submissionRepository.findByProblemIdAndStatusAndJudgementOrderByRunTimeMs(id, SubmissionStatus.FINISHED, SubmissionResultType.AC, Sort.by("run_time").ascending(), Limit.of(limit));
-		List<SubmissionSimple> submission = submissionRepository
+		List<SubmissionSimpleDTO> submission = submissionRepository
 				.findFastes(id, language,
 						//						SubmissionStatus.FINISHED, SubmissionResultType.AC, ScrollPosition.offset())
 						SubmissionStatus.FINISHED, SubmissionResultType.AC, PageRequest.of(0, 10))

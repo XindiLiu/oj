@@ -9,7 +9,6 @@ import com.example.oj.submission.Submission;
 import com.example.oj.submission.SubmissionStatus;
 import com.example.oj.testcase.TestCase;
 import com.example.oj.testcase.TestCaseService;
-import com.example.oj.testcase.TestCaseServiceImpl2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +16,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,9 +24,9 @@ import java.util.function.Consumer;
 
 @Component
 @Slf4j
-public class SimpleCodeTester implements CodeTester {
+public class DockerCodeTester implements CodeTester {
 	@Autowired
-	TestCaseServiceImpl2 testCaseService;
+	TestCaseService testCaseService;
 	//	@Autowired
 	//	SubmissionService submissionService;
 	@Value("${docker.image}")
@@ -43,10 +41,21 @@ public class SimpleCodeTester implements CodeTester {
 	FileService fileService;
 	String compiledFileName = "a.exe";
 
-	// TODO: Handle exceptions.
+	/*
+	 * 1. Create a temp folder as the workspace for the submission.
+	 * 2. Compile the submission.
+	 * 3. Test the submission.
+	 * 4. Delete the temp folder after testing.
+	 * @param problem
+	 * @param submission
+	 * @param afterCodeTesting Actions after code testing, such as updating the submission.
+	 * @throws CodeTesterUnavailableException If docker daemon is not started.
+	 * @throws CodeTestingException If there is an error on file IO or the code testing program.
+	 */
 	@Override
 	@Async
-	public void test(Problem problem, Submission submission, Consumer<Submission> afterCodeTesting) throws CodeTesterUnavailableException, CodeTestingException {
+	public void test(Problem problem, Submission submission, Consumer<Submission> afterCodeTesting)
+			throws CodeTesterUnavailableException, CodeTestingException {
 		Path tempFolder = null;
 		try {
 			tempFolder = fileService.mkTempDir(dockerMountWorkspace).toAbsolutePath();
@@ -67,7 +76,8 @@ public class SimpleCodeTester implements CodeTester {
 				try {
 					fileService.rmDir(tempFolder);
 				} catch (IOException e) {
-					throw new RuntimeException(e);
+					// Use unchecked exception to avoid rollback, handled in global exception handler.
+					throw new RuntimeException("Failed to delete temp folder after code testing.", e);
 				}
 			}
 		}
@@ -79,8 +89,8 @@ public class SimpleCodeTester implements CodeTester {
 		//		submissionService.afterCodeTesting(submission);
 	}
 
-	private Submission testSubmission(Problem problem, Submission submission, Path tempFolder, Path compiledFile) throws IOException, InterruptedException, CodeTestingException {
-
+	private Submission testSubmission(Problem problem, Submission submission, Path tempFolder, Path compiledFile)
+			throws IOException, InterruptedException, CodeTestingException {
 		// Run testcases
 		int timeLimit = problem.getProblemDetail().getTimeLimitSeconds();
 		int memoryLimitMB = problem.getProblemDetail().getMemoryLimitMB();
@@ -92,9 +102,9 @@ public class SimpleCodeTester implements CodeTester {
 
 		log.info("Running test cases, execution command: {}", String.join(" ", exeCmd));
 
-		// Read from database, otherwise cannot get input and output. org.hibernate.HibernateException: Unable to access lob stream
+		// Read from database, otherwise cannot get input and output since the input and output are lazy loaded.
 		List<TestCase> testCases = testCaseService.getByProblemIdWithInOut(problem.getId());
-//		List<TestCase> testCases = problem.getTestCases();
+		//		List<TestCase> testCases = problem.getTestCases();
 
 		submission.setTotalCases(testCases.size());
 		int nPassedCases = 0; // Loop counter
@@ -104,13 +114,13 @@ public class SimpleCodeTester implements CodeTester {
 			byte[] input = testCase.getInput().getBytes();
 			Process exeProcess = new ProcessBuilder(exeCmd)
 					.redirectError(ProcessBuilder.Redirect.INHERIT)
-//					.redirectInput(new File(testCase.getInputPath()))
+					//					.redirectInput(new File(testCase.getInputPath()))
 					.start();
 			exeProcess.getOutputStream().write(input);
-			// Must close
-			exeProcess.getOutputStream().close();
+			exeProcess.getOutputStream().close(); // Must close the output stream.
 
 			// Read output from the process
+			// The output should consist of at least four lines: judgement, time, memory, output from the submitted code.
 			BufferedReader outputReader = new BufferedReader(new InputStreamReader(exeProcess.getInputStream()));
 			List<String> outputs = new ArrayList<>();
 			String line;
@@ -128,30 +138,34 @@ public class SimpleCodeTester implements CodeTester {
 				try {
 					submission.setJudgement(SubmissionResultType.valueOf(judgement));
 				} catch (IllegalArgumentException e) {
-					throw new CodeTestingException(String.format("Unknown judgement from the code tester: %s", judgement), e);
+					throw new CodeTestingException(
+							String.format("Unknown judgement from the code tester: %s", judgement), e);
 				}
 				break;
 			} else { // Program terminated correctly (AC or WA)
 				if (outputs.size() < 4) {
-					throw new CodeTestingException("Wrong output format from the code tester, should be at least four lines (judgement, time, memory, answer), got:" + String.join("\n", outputs));
+					throw new CodeTestingException(
+							"Wrong output format from the code tester, should be at least four lines (judgement, time, memory, answer), got:"
+									+ String.join("\n", outputs));
 				}
 				try {
 					runTimes.add(Long.parseLong(outputs.get(1)));
 
 				} catch (NumberFormatException e) {
-					throw new CodeTestingException("Wrong format of run time, expect an integer but got" + outputs.get(1), e);
+					throw new CodeTestingException(
+							"Wrong format of run time, expect an integer but got" + outputs.get(1), e);
 				}
 				try {
 					memory.add(Long.parseLong(outputs.get(2)));
 
 				} catch (NumberFormatException e) {
-					throw new CodeTestingException("Wrong format of memory, expect an integer but got" + outputs.get(2), e);
+					throw new CodeTestingException("Wrong format of memory, expect an integer but got" + outputs.get(2),
+							e);
 				}
 				String output = String.join("\n", outputs.subList(3, outputs.size()));
 
-
 				// Compare with correct answer
-//				String correctOutput = Files.readString(Path.of(testCase.getOutputPath()));\
+				//				String correctOutput = Files.readString(Path.of(testCase.getOutputPath()));\
 				String correctOutput = testCase.getOutput();
 
 				if (!output.stripTrailing().equals(correctOutput.stripTrailing())) { // Wrong answer
@@ -208,16 +222,5 @@ public class SimpleCodeTester implements CodeTester {
 		}
 	}
 
-
-	private String readProcess(InputStream in) throws IOException {
-		BufferedReader ceReader = new BufferedReader(new InputStreamReader(in));
-		StringBuilder out = new StringBuilder();
-		String line;
-		while ((line = ceReader.readLine()) != null) {
-			out.append(line).append("\n");
-		}
-		return out.toString();
-
-	}
 
 }

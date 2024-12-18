@@ -23,9 +23,9 @@ public class UserProblemResultController {
 			return null;
 		}
 		Long userId = SecurityUtil.getCurrentUser().getId();
-		var optianlResult = userProblemService.getUserProblem(userId, problemId);
-		if (optianlResult.isPresent()) {
-			UserProblemResult bestSubmission = optianlResult.get();
+		var optionalResult = userProblemService.getUserProblem(userId, problemId);
+		if (optionalResult.isPresent()) {
+			UserProblemResult bestSubmission = optionalResult.get();
 			bestSubmission.setSubmissionId(bestSubmission.getBestSubmission().getId());
 			return Result.success(bestSubmission);
 		} else {

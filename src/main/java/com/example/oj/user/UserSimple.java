@@ -18,7 +18,7 @@ public class UserSimple {
 	@Column(name = "id")
 	Long id;
 	@Column(name = "name")
-	String name;
+	String displayName;
 
 	public UserSimple(Long id) {
 		this.id = id;

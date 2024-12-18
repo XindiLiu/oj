@@ -39,14 +39,14 @@ public class WebSecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 				.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(
+				.authorizeHttpRequests( // Allow all requests, use method level security.
 						(authorize) -> authorize
 								//								.requestMatchers("/register", "/login")
 								//								.permitAll()
 								.anyRequest()
 								.permitAll()
 
-				// .authenticated()
+						// .authenticated()
 				)
 
 				// Set anonymous.disable() to make SecurityContextHolder.getContext().getAuthentication() return null

@@ -63,20 +63,18 @@ public class SubmissionController {
 	@PreAuthorize("hasRole('USER')")
 	@PostAuthorize("@userSecurity.isCurrentUser(returnObject.data.getUser().getId())")
 	@GetMapping("submission/{id}")
-	//	@PreAuthorize("@userSecurity.isCurrentUser(#user.id)")
 	/*
 	 * Get result of a submission, including the code. Users can only see code of their own submissions.
+	 * TODO: Return without code if not current user.
 	 */
 	public Result getById(@PathVariable Long id) {
-		var submission = submissionService.getById(id);
-		//        SubmissionSimple submissionSimple = new SubmissionSimple();
-		//        BeanUtils.copyProperties(submission, submissionSimple);
+		SubmissionFullDTOProj submission = submissionService.getById(id);
 		return Result.success(submission);
 	}
 
 	@GetMapping("submission/simple/{id}")
 	/*
-	 * Get result of a submission, excluding the code. 
+	 * Get result of a submission, excluding the code.
 	 */
 	public Result getSimpleById(@PathVariable Long id) {
 		var submissionSimple = submissionService.getSimpleById(id);
@@ -85,28 +83,23 @@ public class SubmissionController {
 
 	@GetMapping("user/{id}/submissions")
 	public Result getAllByUserIdPage(@PathVariable Long id,
-			@RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
-			@RequestParam(value = "pageSize", defaultValue = "20", required = false) Integer pageSize) {
+									 @RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
+									 @RequestParam(value = "pageSize", defaultValue = "20", required = false) Integer pageSize) {
 
 		Pageable pageable = PageRequest.of(pageNumber, pageSize);
-		Page<SubmissionSimple> submissions = submissionService.getAllSubmissionsByUser(id, pageable);
+		Page<SubmissionSimpleDTO> submissions = submissionService.getAllSubmissionsByUser(id, pageable);
 		return Result.success(submissions);
 	}
 
-	//    @GetMapping("submissions")
-	//    public Result<Set<Submission>> getAll(){
-	//        Set<Submission> submission = submissionService.getAll();
-	//        return Result.success(submission);
-	//    }
 
-	@GetMapping("problem/{id}/submissions")
-	public Result getByProblemId(@PathVariable Long id,
-			@RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
-			@RequestParam(value = "size", defaultValue = "20", required = false) Integer size) {
-		Pageable pageable = PageRequest.of(page, size);
-		Page<Submission> submission = submissionService.getByProblem(id, pageable);
-		return Result.success(submission);
-	}
+//	@GetMapping("problem/{id}/submissions")
+//	public Result getByProblemId(@PathVariable Long id,
+//								 @RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+//								 @RequestParam(value = "size", defaultValue = "20", required = false) Integer size) {
+//		Pageable pageable = PageRequest.of(page, size);
+//		Page<Submission> submission = submissionService.getByProblem(id, pageable);
+//		return Result.success(submission);
+//	}
 
 	@GetMapping("problem/time_ranklist/{id}")
 	public Result getFastestByProblem(@PathVariable Long id, @RequestParam String language) {

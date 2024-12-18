@@ -35,7 +35,7 @@ public class UserProblemResultService {
 	EntityManager entityManager;
 
 	/*
-	 * Update the user problem result after a submission is judged.
+	 * Update UserProblemResult after evaluation of a submission.
 	 */
 	@Transactional
 	public void afterCodeTesting(Submission submission) {
@@ -43,7 +43,6 @@ public class UserProblemResultService {
 		User user = submission.getUser();
 		UserProblemResult.UserProblemId userProblemId = new UserProblemResult.UserProblemId(user, problem);
 		Optional<UserProblemResult> userProblemOptional = userProblemResultRepository.findById(userProblemId);
-		//		Optional<UserProblem> userProblemOptional = getUserProblem(user.getId(), problem.getId());
 		UserProblemResult userProblemResult;
 		int old_score = 0;
 		if (userProblemOptional.isEmpty()) {
@@ -59,8 +58,6 @@ public class UserProblemResultService {
 		// Update the user's total score if it increases.
 		long scoreDiff = userProblemResult.getHighestScore() - old_score;
 		if (scoreDiff > 0) {
-			//			long user_old_score = userRepository.getScoreById(user.getId());
-			//			userRepository.updateScore(user.getId(), user_old_score + scoreDiff);
 			userRepository.incrementScore(user.getId(), scoreDiff);
 		}
 	}
@@ -77,20 +74,14 @@ public class UserProblemResultService {
 		userProblemResultRepository.save(userProblemResult);
 	}
 
-	//	public Page<ProblemUserDTO> findAllWithStatus(int pageNo, int pageSize, ProblemSearchDTO problemSearchDTO) {
-	//		User user = SecurityUtil.getCurrentUser();
-	//		Specification<Problem> queryCondition = ProblemSpecification.buildSpecification(problemSearchDTO);
-	//		Page<UserProblem> result = userProblemRepository.findAll(queryCondition, PageRequest.of(pageNo - 1, pageSize));
-	//		return result;
-	//	}
-
+/*
 	public List<ProblemUserDTO> getProblemUserDTOs(Long userId, Specification<Problem> spec) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<ProblemUserDTO> query = cb.createQuery(ProblemUserDTO.class);
 		Root<Problem> problem = query.from(Problem.class);
 
 		// Perform a LEFT JOIN with UserProblem
-		Join<Problem, UserProblemResult> up = problem.join("userProblems", JoinType.LEFT);
+		Join<Problem, UserProblemResult> up = problem.join("userProblemResults", JoinType.LEFT);
 		up.on(cb.equal(up.get("id").get("user").get("id"), userId));
 		// Build predicates
 		Predicate predicate = cb.conjunction();
@@ -117,7 +108,7 @@ public class UserProblemResultService {
 		CriteriaQuery<ProblemUserDTO> query = cb.createQuery(ProblemUserDTO.class);
 		Root<Problem> problem = query.from(Problem.class);
 		// Perform a LEFT JOIN with UserProblem and apply the userId condition in the join
-		Join<Problem, UserProblemResult> up = problem.join("userProblems", JoinType.LEFT);
+		Join<Problem, UserProblemResult> up = problem.join("userProblemResults", JoinType.LEFT);
 		up.on(cb.equal(up.get("id").get("user").get("id"), userId));
 		Predicate predicate = cb.conjunction();
 
@@ -149,7 +140,7 @@ public class UserProblemResultService {
 		// Create a count query for total elements
 		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
 		Root<Problem> countRoot = countQuery.from(Problem.class);
-		Join<Problem, UserProblemResult> countUp = countRoot.join("userProblems", JoinType.LEFT);
+		Join<Problem, UserProblemResult> countUp = countRoot.join("userProblemResults", JoinType.LEFT);
 		countUp.on(cb.equal(countUp.get("id").get("user").get("id"), userId));
 
 		Predicate countPredicate = cb.conjunction();
@@ -168,7 +159,7 @@ public class UserProblemResultService {
 	}
 
 	private Predicate getPredicate(ProblemSearchDTO dto, CriteriaBuilder cb, Join<Problem, UserProblemResult> countUp,
-			Predicate countPredicate) {
+								   Predicate countPredicate) {
 		if (dto.includeAll != null && !dto.includeAll) {
 			Predicate statusPredicate = cb.disjunction();
 			if (dto.includePassed != null && dto.includePassed) {
@@ -193,7 +184,7 @@ public class UserProblemResultService {
 		Root<Problem> problem = query.from(Problem.class);
 
 		// Perform a LEFT JOIN with UserProblem and apply the userId condition in the join
-		Join<Problem, UserProblemResult> up = problem.join("userProblems", JoinType.LEFT);
+		Join<Problem, UserProblemResult> up = problem.join("userProblemResults", JoinType.LEFT);
 		up.on(cb.equal(up.get("id").get("user").get("id"), userId));
 		var spec = ProblemSpecification.buildSpecificationWithUser(dto, userId);
 		// Apply specifications
@@ -221,7 +212,7 @@ public class UserProblemResultService {
 		// Create a count query for total elements
 		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
 		Root<Problem> countRoot = countQuery.from(Problem.class);
-		Join<Problem, UserProblemResult> countUp = countRoot.join("userProblems", JoinType.LEFT);
+		Join<Problem, UserProblemResult> countUp = countRoot.join("userProblemResults", JoinType.LEFT);
 		countUp.on(cb.equal(countUp.get("id").get("user").get("id"), userId));
 
 		Predicate countPredicate = cb.conjunction();
@@ -232,58 +223,7 @@ public class UserProblemResultService {
 		Long total = entityManager.createQuery(countQuery).getSingleResult();
 		return new PageImpl<>(resultList, pageable, total);
 	}
+*/
 
-	//	public Page<ProblemUserDTO> getProblemUserDTOPage(Long userId, Specification<Problem> spec, Pageable pageable) {
-	//		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-	//		CriteriaQuery<ProblemUserDTO> query = cb.createQuery(ProblemUserDTO.class);
-	//		Root<Problem> problem = query.from(Problem.class);
-	//
-	//		// Perform a LEFT JOIN with UserProblem and apply the userId condition in the join
-	//		Join<Problem, UserProblem> up = problem.join("userProblems", JoinType.LEFT);
-	//		up.on(cb.equal(up.get("id").get("user").get("id"), userId));
-	//
-	//		// Apply specifications
-	//		Predicate predicate = cb.conjunction();
-	//		if (spec != null) {
-	//			Predicate specPredicate = spec.toPredicate(problem, query, cb);
-	//			if (specPredicate != null) {
-	//				predicate = cb.and(predicate, specPredicate);
-	//			}
-	//		}
-	//		query.where(predicate);
-	//
-	//		// Set the selection to the ProblemUserDTO constructor
-	//		query.select(cb.construct(
-	//				ProblemUserDTO.class,
-	//				problem.get("id"),
-	//				problem.get("title"),
-	//				problem.get("difficulty"),
-	//				up.get("status"),
-	//				up.get("highestScore")
-	//		));
-	//
-	//		// Execute the query with pagination
-	//		List<ProblemUserDTO> resultList = entityManager.createQuery(query)
-	//				.setFirstResult((int) pageable.getOffset())
-	//				.setMaxResults(pageable.getPageSize())
-	//				.getResultList();
-	//
-	//		// Create a count query for total elements
-	//		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-	//		Root<Problem> countRoot = countQuery.from(Problem.class);
-	//		Join<Problem, UserProblem> countUp = countRoot.join("userProblems", JoinType.LEFT);
-	//		countUp.on(cb.equal(countUp.get("id").get("user").get("id"), userId));
-	//
-	//		Predicate countPredicate = cb.conjunction();
-	//		if (spec != null) {
-	//			Predicate specPredicate = spec.toPredicate(countRoot, countQuery, cb);
-	//			if (specPredicate != null) {
-	//				countPredicate = cb.and(countPredicate, specPredicate);
-	//			}
-	//		}
-	//		countQuery.select(cb.countDistinct(countRoot)).where(countPredicate);
-	//		Long total = entityManager.createQuery(countQuery).getSingleResult();
-	//		return new PageImpl<>(resultList, pageable, total);
-	//	}
 
 }

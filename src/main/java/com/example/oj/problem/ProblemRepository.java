@@ -15,7 +15,7 @@ public interface ProblemRepository extends CrudRepository<Problem, Long> {
 
 	Problem getById(Long id);
 
-	ProblemSimplePorj findProblemSimpleById(Long id);
+	ProblemSimpleProj findProblemSimpleById(Long id);
 
 	@EntityGraph(attributePaths = "problemDetail")
 	Optional<Problem> findById(Long id);

@@ -9,6 +9,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+/*
+ * Used for creating a submission.
+ */
 public class SubmissionDTO {
 	String code;
 	String language;

@@ -50,16 +50,6 @@ public class ProblemService {
 		return detailRepository.save(problem.getProblemDetail());
 	}
 
-//	@Transactional
-//	public ProblemDetail save(Long id, Problem problem) throws IdNotFoundException {
-//		ProblemDetail problemDetail = detailRepository.findById(id).orElseThrow(() -> new IdNotFoundException(Problem.class, id));
-//		if (problemDetail == null) {
-//			return null;
-//		}
-//		return detailRepository.save(problem);
-//	}
-
-
 	@Transactional
 	public ProblemDetail update(Long id, ProblemCreateDTO problemDto) throws IdNotFoundException {
 		User user = SecurityUtil.getCurrentUser();
@@ -75,58 +65,11 @@ public class ProblemService {
 		return savedProblem;
 	}
 
-	//	@Transactional
-	//	public void save(ProblemDetail problemDetail) {
-	//		detailRepository.save(problemDetail);
-	////        Problem problem = new Problem();
-	////        problem.setId(problemDetail.getId());
-	////        problemRepository.save(problem);
-	//	}
 
-//	public Page<Problem> page(int pageNo, int pageSize, ProblemSearchDTO problemSearchDTO) {
-//		Specification<Problem> queryCondition = ProblemSpecification.buildSpecification(problemSearchDTO);
-//		try {
-//			var result = problemRepository.findAll(queryCondition,
-//					PageRequest.of(pageNo, pageSize));
-//			return result;
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return null;
-//		}
-//	}
-
-//	public void uploadTestData(MultipartFile file) {
-//	}
-
-	public ProblemSimplePorj getSimpleById(Long id) {
+	public ProblemSimpleProj getSimpleById(Long id) {
 		return problemRepository.findProblemSimpleById(id);
 	}
 
-	//	public List<ProblemUserDTO> pageWithStatus(ProblemSearchDTO problemSearchDTO) {
-	//		User user = SecurityUtil.getCurrentUser();
-	//		Specification<Problem> queryCondition = ProblemSpecification.buildSpecification(problemSearchDTO);
-	//		List<ProblemUserDTO> result = userProblemService.getProblemUserDTOs(user.getId(), queryCondition);
-	//		return result;
-	//	}
-	//
-	//	public Page<Problem> pageWithStatus(int pageNo, int pageSize, ProblemSearchDTO problemSearchDTO) {
-	//		User user = SecurityUtil.getCurrentUser();
-	//		Page<Problem> result = problemRepository.findAll(ProblemSpecification.buildSpecificationWithUser(problemSearchDTO, user.getId()), PageRequest.of(pageNo, pageSize));
-	//		return result;
-	//	}
-
-	//	public Page<ProblemUserDTO> getPagedProblemUserDTOs(int pageNumber, int pageSize, ProblemSearchDTO problemSearchDTO) {
-	//		// Convert pageNumber to zero-based index
-	//		Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
-	//		// Build the specification based on search criteria
-	//		Specification<Problem> spec = ProblemSpecification.buildSpecification(problemSearchDTO);
-	//		// Retrieve the current user's ID (implement based on your security context)
-	//		User user = SecurityUtil.getCurrentUser();
-	//		// Fetch the paged data
-	////		Page<ProblemUserDTO> problemUserDTOPage = userProblemService.getProblemUserDTOPage(user.getId(), spec, pageable);
-	//		Page<ProblemUserDTO> problemUserDTOPage = userProblemService.getProblemUserDTOPage2(user.getId(), problemSearchDTO, pageable);
-	//		return problemUserDTOPage;
-	//	}
 	public Page<ProblemUserDTO> getPagedProblem(int pageNo, int pageSize, ProblemSearchDTO problemSearchDTO) {
 		var queryCondition = ProblemSpecification.buildSpecification(problemSearchDTO);
 		var problemResult = problemRepository.findAll(queryCondition, PageRequest.of(pageNo, pageSize));
@@ -147,7 +90,7 @@ public class ProblemService {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<ProblemUserDTO> query = cb.createQuery(ProblemUserDTO.class);
 		Root<Problem> problem = query.from(Problem.class);
-		Join<Problem, UserProblemResult> upJoin = problem.join("userProblems", JoinType.LEFT);
+		Join<Problem, UserProblemResult> upJoin = problem.join("userProblemResults", JoinType.LEFT);
 		upJoin.on(cb.equal(upJoin.get("id").get("user").get("id"), userId));
 		Predicate predicate = ProblemSpecification.buildSpecificationWithUser(problemSearchDTO, userId)
 				.toPredicate(problem, query, cb);
@@ -167,7 +110,7 @@ public class ProblemService {
 		// Count query for PageImpl
 		CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
 		Root<Problem> countRoot = countQuery.from(Problem.class);
-		Join<Problem, UserProblemResult> countJoin = countRoot.join("userProblems", JoinType.LEFT);
+		Join<Problem, UserProblemResult> countJoin = countRoot.join("userProblemResults", JoinType.LEFT);
 		countJoin.on(cb.equal(countJoin.get("id").get("user").get("id"), userId));
 
 		Predicate countPredicate = ProblemSpecification.buildSpecificationWithUser(problemSearchDTO, userId)

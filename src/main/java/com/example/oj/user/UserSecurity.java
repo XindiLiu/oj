@@ -7,15 +7,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component("userSecurity")
-public class UserSecurity {
 
+public class UserSecurity {
+	/*
+	 * Used in annotations for method security such as @PreAuthorize 
+	 * to check if the current user is the same as the user id.
+	 */
 	public boolean isCurrentUser(Long userId) {
-//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//		if (authentication == null || !authentication.isAuthenticated()) {
-//			return false;
-//		}
-		// Retrieve the current user's ID
-//		User currentUser = (User) authentication.getPrincipal();
 		User currentUser = SecurityUtil.getCurrentUser();
 		if (currentUser == null) {
 			return false;

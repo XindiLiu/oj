@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 public class TestCaseController {
 	@Autowired
-	TestCaseServiceImpl2 testCaseService;
+	TestCaseService testCaseService;
 	@Autowired
 	ProblemService problemService;
 	@Autowired

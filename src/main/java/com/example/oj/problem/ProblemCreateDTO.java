@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+
 public class ProblemCreateDTO {
 	String title;
 	Integer difficulty;

@@ -72,7 +72,7 @@ public class ProblemSpecification {
 	public static Specification<Problem> buildSpecificationWithUser(ProblemSearchDTO dto, Long userId) {
 		Specification<Problem> problemSpec = buildSpecification(dto);
 		Specification<Problem> problemSpecWithUser = (root, query, cb) -> {
-			Join<Problem, UserProblemResult> up = root.join("userProblems", JoinType.LEFT);
+			Join<Problem, UserProblemResult> up = root.join("userProblemResults", JoinType.LEFT);
 			up.on(cb.equal(up.get("id").get("user").get("id"), userId));
 			Predicate predicate = cb.conjunction();
 			Predicate specPredicate = problemSpec.toPredicate(root, query, cb);

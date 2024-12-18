@@ -1,6 +1,5 @@
 package com.example.oj.user;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +13,6 @@ import java.io.Serializable;
 @ToString
 public class UserUpdateDTO implements Serializable {
 	public Long id;
-	public String name;
+	public String displayName;
 //    public Long score;
 }

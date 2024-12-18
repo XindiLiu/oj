@@ -40,7 +40,6 @@ public class UserProblemResult {
 
 	@Id
 	@JsonIgnore
-	//	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	UserProblemResult.UserProblemId id;
 
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)

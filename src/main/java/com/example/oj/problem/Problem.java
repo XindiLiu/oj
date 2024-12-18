@@ -34,7 +34,7 @@ public class Problem {
 	@Column(name = "difficulty")
 	Integer difficulty;
 	@Enumerated(EnumType.STRING)
-	ProblemVisibility visibility;
+	ProblemVisibility visibility; // TODO: Handle visibility
 	@Column(name = "create_user")
 	Long createUser;
 	@CreationTimestamp

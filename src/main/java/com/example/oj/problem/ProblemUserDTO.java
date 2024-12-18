@@ -8,18 +8,22 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+/*
+ * Information of a problem together with the current user's result on the problem.
+ * Used for problem in lists.
+ */
 public class ProblemUserDTO {
 	Long id;
 	String title;
 	Integer difficulty;
-	SubmissionResultType userStatus;
+	SubmissionResultType userResult;
 	Integer highestScore;
 
 	public ProblemUserDTO(Problem problem) {
 		this.id = problem.getId();
 		this.title = problem.getTitle();
 		this.difficulty = problem.getDifficulty();
-		this.userStatus = null;
+		this.userResult = null;
 		this.highestScore = null;
 	}
 }

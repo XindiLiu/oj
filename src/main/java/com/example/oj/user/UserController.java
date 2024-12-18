@@ -25,7 +25,6 @@ public class UserController {
 	public Result login(@RequestBody UserLoginDTO userLogin, HttpServletRequest request, HttpServletResponse response) {
 
 		log.info("login: {}", userLogin);
-		//		userLogin.setPassword(MD5Utils.md5(userLogin.getPassword()));
 		String jwt = null;
 		try {
 			jwt = userService.login(userLogin);
@@ -35,15 +34,6 @@ public class UserController {
 			// Should not happen. Handled by front end.
 			return Result.fail("Already logged in.");
 		}
-		//		if (result.getCode() == 1) {
-		//			User user = (User) result.getData();
-		//			Cookie tokenCookie = new Cookie("token", JwtUtil.generateJWT(user));
-		//			tokenCookie.setMaxAge(Integer.MAX_VALUE);
-		//			response.addCookie(tokenCookie);
-		//			log.info("logged in as:{}", user.getId());
-		//		} else {
-		//			log.info("login failed");
-		//		}
 		return Result.success(jwt);
 	}
 
@@ -115,7 +105,7 @@ public class UserController {
 	}
 
 	/*
-	 * Rank all users by score. 
+	 * Rank all users by score.
 	 * TODO: Add limit
 	 */
 	@GetMapping("/user/rank")

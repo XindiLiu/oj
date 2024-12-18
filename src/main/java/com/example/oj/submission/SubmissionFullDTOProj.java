@@ -6,9 +6,10 @@ import com.example.oj.constant.SubmissionResultType;
 import java.util.Calendar;
 
 /**
- * Projection for {@link Submission}
+ * Projection for Submission together with problem and user information. 
+ * Full information of a Submission displayed in detail page of a submission.
  */
-public interface SubmissionInfo {
+public interface SubmissionFullDTOProj {
 	Long getId();
 
 	Calendar getCreateTime();
@@ -56,6 +57,6 @@ public interface SubmissionInfo {
 
 		String getUsername();
 
-		String getName();
+		String getDisplayName();
 	}
 }

@@ -11,6 +11,9 @@ import java.nio.file.Paths;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+/*
+ * A list of file name for all test cases of a problem. Used in the upload test case page.
+ */
 public class TestCaseResponseDTO {
 	Integer number;
 	String inputFileName;

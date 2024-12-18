@@ -3,9 +3,7 @@ package com.example.oj.submission;
 import com.example.oj.constant.ProgrammingLanguage;
 import com.example.oj.constant.SubmissionResultType;
 import com.example.oj.problem.ProblemSimple;
-import com.example.oj.problem.ProblemSimplePorj;
 import com.example.oj.user.UserSimple;
-import com.example.oj.user.UserSimpleProj;
 import lombok.Data;
 import lombok.ToString;
 
@@ -13,7 +11,10 @@ import java.util.Calendar;
 
 @Data
 @ToString
-public class SubmissionSimple {
+/**
+ * Simple information of a Submission displayed in submission lists.
+ */
+public class SubmissionSimpleDTO {
 	Long id;
 	ProblemSimple problem;
 	UserSimple user;
@@ -28,8 +29,9 @@ public class SubmissionSimple {
 	Integer totalCases;
 	Integer score;
 
-
-	public SubmissionSimple(Long id, Long userId, String userName, Long problemId, String problemTitle, Calendar createTime, ProgrammingLanguage language, SubmissionStatus status, SubmissionResultType judgement, Long runTimeMs, Long memoryByte, Integer numPassedCases, Integer totalCases, Integer score) {
+	public SubmissionSimpleDTO(Long id, Long userId, String userName, Long problemId, String problemTitle,
+							   Calendar createTime, ProgrammingLanguage language, SubmissionStatus status, SubmissionResultType judgement,
+							   Long runTimeMs, Long memoryByte, Integer numPassedCases, Integer totalCases, Integer score) {
 		this.id = id;
 		this.problem = new ProblemSimple(problemId, problemTitle);
 		this.user = new UserSimple(userId, userName);
@@ -44,7 +46,7 @@ public class SubmissionSimple {
 		this.score = score;
 	}
 
-	public SubmissionSimple() {
+	public SubmissionSimpleDTO() {
 	}
 
 }
