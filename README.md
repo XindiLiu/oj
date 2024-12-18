@@ -29,13 +29,10 @@
 [//]: # (- [Contact]&#40;#contact&#41;)
 
 ## Overview
-
-The **Online Code Testing Platform** is a robust web application designed to facilitate programming problem submissions
-and automated code evaluations. It allows users to submit solutions to various coding challenges, which are then
-automatically tested against predefined test cases to validate correctness and performance.
+This online code testing platform is a robust web application designed to facilitate programming problem submissions and automated code evaluations. It allows users to submit solutions to various coding challenges, which are then automatically tested against predefined test cases to validate correctness and performance.
+Please check section [Explanation of Terminologies](#explanation-of-terminologies) if you are not familiar with online judgement systems.
 
 ## Features
-
 - **User Management:** Registration, authentication, and profile management.
 - **Problem Management:** Create, update, and manage programming problems with detailed descriptions and test cases.
 - **Problem Statistics:** Shows the fastest submissions for each problem and each language.
@@ -47,7 +44,6 @@ automatically tested against predefined test cases to validate correctness and p
 - **Scalability:** Designed with a modular architecture to handle a large number of concurrent users and submissions.
 - **Caching** Caching frequently used data in the backend to reduce the number of queries to the database. (TODO)
 - **Ranklist:** Ranklist of users ordered by scores.
-  
 
 ## Technologies Used
 
@@ -71,114 +67,67 @@ The platform follows a **Microservices Architecture**, ensuring scalability and 
 - **Code Tester:** Executes and evaluates code submissions within Docker containers to ensure isolated and secure
   testing environments.
 
-[//]: # (## Installation)
 
-[//]: # ()
+This **Online Code Testing Platform** is a robust web application designed to facilitate programming problem submissions
+and automated code evaluations. It allows users to submit solutions to various coding challenges, which are then
+automatically tested against predefined test cases to validate correctness and performance.
 
-[//]: # (### Prerequisites)
+## Explanation of Terminologies
+This section is for understanding the terminologies used in online judgment systems. You can skip this section if you are already familiar with similar platforms such as LeetCode, Kattis, or Codeforces.
 
-[//]: # ()
+- **Online Judgement (OJ)**: An Online Judgement (OJ) system is a platform that allows users to solve programming challenges by submitting their code. The system automatically evaluates submissions against predefined test cases to determine their correctness and efficiency.
 
-[//]: # (- Java 11 or higher)
+- **Problem**: A Problem is a programming challenge presented to users. It specifies the required tasks, input format, and output format. Solutions must meet certain performance constraints, including limits on CPU time and memory usage.
 
-[//]: # (- Maven)
+- **Solution**: A Solution is the code written to solve a given problem, or the compiled program resulting from that code.
 
-[//]: # (- Docker)
+- **Test Case**: A Test Case is a set of input data paired with its expected output, used to evaluate the correctness of a solution. Each problem typically includes multiple test cases, often arranged by increasing difficulty, to thoroughly assess various scenarios.
 
-[//]: # (- MySQL)
+- **Code Testing**: Code Testing is the process of evaluating a solution by compiling the code and then running it against predefined test cases to determine correctness and efficiency.
 
-[//]: # (### Steps)
+- **Judgement**: Judgement is the outcome of the code testing process. It classifies solutions based on their performance with respect to the test cases and resource constraints.
 
-[//]: # ()
+  Common Judgement Types:
+  - **Accepted (AC)**: The solution passed all test cases within the given resource limits.
+  - **Wrong Answer (WA)**: The solution produced incorrect output for one or more test cases.
+  - **Compilation Error (CE)**: The code failed to compile due to syntax or other compilation issues.
+  - **Time Limit Exceeded (TLE)**: The solution did not complete execution within the specified time limit.
+  - **Memory Limit Exceeded (MLE)**: The solution used more memory than allowed.
+  - **Runtime Error (RE)**: The solution crashed or encountered an unexpected error during execution.
+  - **Judgement Error (JE)**: An internal error occurred during the evaluation process.
 
-[//]: # (1. **Clone the Repository**)
+- **Submission**: A Submission is an attempt at solving a problem by sending a solution to the OJ system. Each submission contains the code, its judgement result, execution time, memory usage, and the number of test cases passed.
 
-[//]: # (    ```bash)
 
-[//]: # (    git clone https://github.com/XindiLiu/oj.git)
+## Installation
 
-[//]: # (    cd oj)
+### Prerequisites:
 
-[//]: # (    ```)
+- Docker
+- Maven
+- Java 17
 
-[//]: # ()
-
-[//]: # (2. **Configure the Database**)
-
-[//]: # (    - Create a MySQL database.)
-
-[//]: # (    - Update the `application.properties` file with your database credentials.)
-
-[//]: # (    ```properties)
-
-[//]: # (    spring.datasource.url=jdbc:mysql://localhost:3306/your_database)
-
-[//]: # (    spring.datasource.username=your_username)
-
-[//]: # (    spring.datasource.password=your_password)
-
-[//]: # (    ```)
-
-[//]: # ()
-
-[//]: # (3. **Build the Project**)
-
-[//]: # (    ```bash)
-
-[//]: # (    mvn clean install)
-
-[//]: # (    ```)
-
-[//]: # ()
-
-[//]: # (4. **Run Docker**)
-
-[//]: # (    - Ensure Docker is running on your machine.)
-
-[//]: # (    - Pull the necessary Docker images or build your own if required.)
-
-[//]: # ()
-
-[//]: # (5. **Start the Application**)
-
-[//]: # (    ```bash)
-
-[//]: # (    mvn spring-boot:run)
-
-[//]: # (    ```)
-
-[//]: # ()
-
-[//]: # (6. **Access the Application**)
-
-[//]: # (    - Open your browser and navigate to `http://localhost:8080`.)
-
-[//]: # (## Usage)
-
-[//]: # ()
-
-[//]: # (1. **Register an Account**)
-
-[//]: # (    - Navigate to the registration page and create a new account.)
-
-[//]: # ()
-
-[//]: # (2. **Create or Select a Problem**)
-
-[//]: # (    - If you have administrative privileges, you can create new programming problems.)
-
-[//]: # (    - Otherwise, browse through the existing problem set.)
-
-[//]: # ()
-
-[//]: # (3. **Submit Your Code**)
-
-[//]: # (    - Select a problem and submit your solution in your preferred programming language.)
-
-[//]: # ()
-
-[//]: # (4. **View Results**)
-
-[//]: # (    - Receive immediate feedback on your submission status, including which test cases passed or failed and performance)
-
-[//]: # (      metrics.)
+### Steps:
+#### 1. Configure the Datasource
+Create a `datasource.properties` file to set up the application's datasource.
+**File Path:** `src/main/resources/datasource.properties`
+```
+spring.datasource.url=your_database_url
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+```
+#### 2. Install Docker and Create the oj-judge Image
+**a. Install Docker** 
+If Docker is not installed on your machine, download and install it.
+**b. Create the code tester Image**
+Navigate to the oj-judge folder and run the following command to build the image:
+```
+docker build -t code2 .
+```
+#### 3. Build and Run the Application Using Maven Wrapper
+```
+./mvnw clean install
+./mvnw spring-boot:run
+```
+### Accessing the Application
+The application will be running on port 8080.
