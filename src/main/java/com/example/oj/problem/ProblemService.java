@@ -54,7 +54,8 @@ public class ProblemService {
 	public ProblemDetail update(Long id, ProblemCreateDTO problemDto) throws IdNotFoundException {
 		User user = SecurityUtil.getCurrentUser();
 
-		ProblemDetail problemDetail = detailRepository.findById(id).orElseThrow(() -> new IdNotFoundException(Problem.class, id));
+		ProblemDetail problemDetail = detailRepository.findById(id)
+				.orElseThrow(() -> new IdNotFoundException(Problem.class, id));
 		if (problemDetail == null) {
 			return null;
 		}
@@ -64,7 +65,6 @@ public class ProblemService {
 		ProblemDetail savedProblem = detailRepository.save(problemDetail);
 		return savedProblem;
 	}
-
 
 	public ProblemSimpleProj getSimpleById(Long id) {
 		return problemRepository.findProblemSimpleById(id);
@@ -78,14 +78,13 @@ public class ProblemService {
 	}
 
 	public Page<ProblemUserDTO> getPagedProblemWithUser(int pageNumber, int pageSize,
-														ProblemSearchDTO problemSearchDTO) {
+			ProblemSearchDTO problemSearchDTO) {
 		Pageable pageable = PageRequest.of(pageNumber, pageSize);
-		User user = SecurityUtil.getCurrentUser();
-		if (user == null) {
+		// User user = SecurityUtil.getCurrentUser();
+		Long userId = problemSearchDTO.getFilterUserId();
+		if (userId == null) {
 			return getPagedProblem(pageNumber, pageSize, problemSearchDTO);
 		}
-		Long userId = user.getId();
-
 		// Fetch the paged data
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<ProblemUserDTO> query = cb.createQuery(ProblemUserDTO.class);

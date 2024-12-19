@@ -16,18 +16,9 @@ public class ProblemSearchDTO {
 	public Integer minDifficulty;
 	public Integer maxDifficulty;
 	public ProblemVisibility visibility;
-	public Boolean includeAll;
-	public Boolean includePassed;
-	public Boolean includeFailed;
-	public Boolean includeNotTried;
-//	public ProblemSearchDTO() {
-//	}
-//
-//	public ProblemSearchDTO(String title, Long createUser, Integer minDifficulty, Integer maxDifficulty, ProblemVisibility visibility) {
-//		this.title = title;
-//		this.createUser = createUser;
-//		this.minDifficulty = minDifficulty;
-//		this.maxDifficulty = maxDifficulty;
-//		this.visibility = visibility;
-//	}
+	public Long filterUserId; // The ID of the user to whom includeAll, includePassed, includeFailed, and includeNotTried apply.
+	public Boolean includeAll; // Include all problems, if true the other includeXXX will be ignored.
+	public Boolean includePassed; // Include problems that the user has passed (accepted).
+	public Boolean includeFailed; // Include problems that the user has tried but not passed.
+	public Boolean includeNotTried; // Include problems that the user has not tried.
 }

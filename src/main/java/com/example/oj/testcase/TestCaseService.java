@@ -39,7 +39,7 @@ public class TestCaseService {
 	}
 
 	public ArrayList<TestCase> getByProblemId(Long problemId) {
-		return testCaseRepository.getByProblemIdOrOrderByName(problemId);
+		return testCaseRepository.getByProblemIdOrderByName(problemId);
 	}
 
 	/*
@@ -48,7 +48,7 @@ public class TestCaseService {
 	 */
 	@Transactional
 	public ArrayList<TestCase> getByProblemIdWithInOut(Long problemId) {
-		ArrayList<TestCase> testCases = testCaseRepository.getByProblemIdOrOrderByName(problemId);
+		ArrayList<TestCase> testCases = testCaseRepository.getByProblemIdOrderByName(problemId);
 		for (TestCase testCase : testCases) {
 			testCase.setInput(testCase.getInput());
 			testCase.setOutput(testCase.getOutput());

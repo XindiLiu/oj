@@ -12,7 +12,7 @@ public interface TestCaseRepository extends CrudRepository<TestCase, Long> {
 
 	List<TestCase> getByProblemId(Long problemId);
 
-	ArrayList<TestCase> getByProblemIdOrOrderByName(Long problemId);
+	ArrayList<TestCase> getByProblemIdOrderByName(Long problemId);
 
 	void deleteByProblemId(Long problemId);
 
