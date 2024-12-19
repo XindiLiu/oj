@@ -64,7 +64,7 @@ int run_program(const char* executable, ll time_limit_ms, ll memory_limit_MB) {
     int pipefd[2];
     if (pipe(pipefd) == -1) {
         perror("pipe failed");
-        exit(1);
+        exit(21);
     }
     pipe_read = pipefd[0];
     pipe_write = pipefd[1];
@@ -72,7 +72,7 @@ int run_program(const char* executable, ll time_limit_ms, ll memory_limit_MB) {
     pid_t pid = fork();
     if (pid == -1) {
         perror("fork failed");
-        exit(1);
+        exit(22);
     }
 
     if (pid == 0) {
@@ -83,7 +83,7 @@ int run_program(const char* executable, ll time_limit_ms, ll memory_limit_MB) {
 
         execl(executable, executable, (char*)NULL);
         perror("execl failed");
-        exit(127);
+        exit(23);
     }
     else {
         // Parent process
@@ -141,11 +141,12 @@ int run_program(const char* executable, ll time_limit_ms, ll memory_limit_MB) {
 int main(int argc, char* argv[]) {
     if (argc < 3) {
         fprintf(stderr, "Too few arguments");
-        return 10;
+        return 20;
     }
     char* executable = argv[1];
     ll time_limit_ms = atoi(argv[2]);
     ll memory_limit_MB = atoi(argv[3]);
     // printf("%ld %ld", time_limit_ms, memory_limit_MB);
-    return run_program(executable, time_limit_ms, memory_limit_MB);
+    run_program(executable, time_limit_ms, memory_limit_MB);
+    return 0;
 }

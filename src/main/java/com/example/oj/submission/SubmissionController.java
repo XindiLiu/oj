@@ -49,14 +49,7 @@ public class SubmissionController {
 		submission.setProblem(problem);
 		submission.setStatus(SubmissionStatus.SUBMITTED);
 		Submission submissionResult = null;
-		try {
-			submissionResult = submissionService.submit(submission);
-		} catch (CodeTesterUnavailableException e) {
-			Result.fail("Code tester unavailable");
-		} catch (CodeTestingException e) {
-			log.error("Error on code testing: {}", e.getMessage());
-			Result.fail("Error on code testing");
-		}
+		submissionResult = submissionService.submit(submission);
 		return Result.success(submissionResult);
 	}
 

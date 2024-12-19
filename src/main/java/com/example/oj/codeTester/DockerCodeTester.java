@@ -29,17 +29,18 @@ public class DockerCodeTester implements CodeTester {
 	TestCaseService testCaseService;
 	//	@Autowired
 	//	SubmissionService submissionService;
-	@Value("${docker.image}")
+	@Value("${DockerCodeTester.docker.image}")
 	String dockerImage;
 
-	@Value("${docker.mountFolder}")
+	@Value("${DockerCodeTester.docker.mountFolder}")
 	String dockerMountWorkspace;
 
-	@Value("${docker.workspace}")
+	@Value("${DockerCodeTester.docker.workspace}")
 	String dockerWorkspace;
 	@Autowired
 	FileService fileService;
-	String compiledFileName = "a.exe";
+	@Value("${DockerCodeTester.compiledFileName}")
+	String compiledFileName;
 
 	/*
 	 * 1. Create a temp folder as the workspace for the submission.
@@ -54,8 +55,7 @@ public class DockerCodeTester implements CodeTester {
 	 */
 	@Override
 	@Async
-	public void test(Problem problem, Submission submission, Consumer<Submission> afterCodeTesting)
-			throws CodeTesterUnavailableException, CodeTestingException {
+	public void test(Problem problem, Submission submission, Consumer<Submission> afterCodeTesting) {
 		Path tempFolder = null;
 		try {
 			tempFolder = fileService.mkTempDir(dockerMountWorkspace).toAbsolutePath();
@@ -67,30 +67,34 @@ public class DockerCodeTester implements CodeTester {
 			log.info("test finished: {}", submission.getId());
 		} catch (IOException e) {
 			log.error("Error on file IO: {}", e.getMessage());
-			throw new CodeTestingException(e);
+			submission.setStatus(SubmissionStatus.FAILED);
+			submission.setJudgement(SubmissionResultType.JE);
 		} catch (InterruptedException e) {
-			log.error("Error on code testing: {}", e.getMessage());
-			throw new CodeTestingException(e);
+			log.error("Error on the code testing process: {}", e.getMessage());
+			submission.setStatus(SubmissionStatus.FAILED);
+			submission.setJudgement(SubmissionResultType.JE);
+		} catch (CodeTestingException | CodeTesterUnavailableException e) {
+			log.error(e.getMessage());
+			submission.setStatus(SubmissionStatus.FAILED);
+			submission.setJudgement(SubmissionResultType.JE);
 		} finally {
 			if (tempFolder != null) {
 				try {
 					fileService.rmDir(tempFolder);
 				} catch (IOException e) {
 					// Use unchecked exception to avoid rollback, handled in global exception handler.
-					throw new RuntimeException("Failed to delete temp folder after code testing.", e);
+					log.error("Failed to delete temp folder {} after code testing: {}", tempFolder, e.getMessage());
+//					throw new RuntimeException("Failed to delete temp folder after code testing.", e);
 				}
 			}
 		}
 
-		if (submission.getStatus() != SubmissionStatus.FAILED && submission.getJudgement() != SubmissionResultType.JE) {
-			afterCodeTesting.accept(submission);
-		}
+		afterCodeTesting.accept(submission);
 
-		//		submissionService.afterCodeTesting(submission);
 	}
 
 	private Submission testSubmission(Problem problem, Submission submission, Path tempFolder, Path compiledFile)
-			throws IOException, InterruptedException, CodeTestingException {
+			throws CodeTestingException, CodeTesterUnavailableException, IOException, InterruptedException {
 		// Run testcases
 		int timeLimit = problem.getProblemDetail().getTimeLimitSeconds();
 		int memoryLimitMB = problem.getProblemDetail().getMemoryLimitMB();
@@ -129,7 +133,6 @@ public class DockerCodeTester implements CodeTester {
 			}
 			outputReader.close();
 			int exeStatus = exeProcess.waitFor();
-
 			if (outputs.isEmpty()) {
 				throw new CodeTestingException("No output from the code tester");
 			}
@@ -150,14 +153,12 @@ public class DockerCodeTester implements CodeTester {
 				}
 				try {
 					runTimes.add(Long.parseLong(outputs.get(1)));
-
 				} catch (NumberFormatException e) {
 					throw new CodeTestingException(
 							"Wrong format of run time, expect an integer but got" + outputs.get(1), e);
 				}
 				try {
 					memory.add(Long.parseLong(outputs.get(2)));
-
 				} catch (NumberFormatException e) {
 					throw new CodeTestingException("Wrong format of memory, expect an integer but got" + outputs.get(2),
 							e);

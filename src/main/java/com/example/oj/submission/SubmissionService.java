@@ -51,13 +51,15 @@ public class SubmissionService {
 				i++;
 			}
 			submission.setScore(Integer.valueOf((int) ((score / weightSum) * 100)));
+			submissionRepository.save(submission);
+			userProblemResultService.afterCodeTesting(submission);
+		} else {
+			submissionRepository.save(submission);
 		}
 
-		submissionRepository.save(submission);
-		userProblemResultService.afterCodeTesting(submission);
 	}
 
-	public Submission submit(Submission submission) throws CodeTesterUnavailableException, CodeTestingException {
+	public Submission submit(Submission submission) {
 		User user = SecurityUtil.getCurrentUser();
 		submission.setUser(user);
 		submission.setStatus(SubmissionStatus.RUNNING);

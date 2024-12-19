@@ -13,5 +13,5 @@ public interface CodeTester {
 
 	// TODO: Handle exceptions.
 	@Async
-	abstract void test(Problem problem, Submission submission, Consumer<Submission> afterCodeTesting) throws CodeTesterUnavailableException, CodeTestingException;
+	abstract void test(Problem problem, Submission submission, Consumer<Submission> afterCodeTesting);
 }
