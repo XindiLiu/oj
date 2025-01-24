@@ -1,9 +1,7 @@
 package com.example.oj.codeTester;
 
-import com.example.oj.exception.CodeTesterUnavailableException;
-import com.example.oj.exception.CodeTestingException;
-import com.example.oj.problem.Problem;
-import com.example.oj.submission.Submission;
+import com.example.oj.entity.Problem;
+import com.example.oj.entity.Submission;
 import org.springframework.scheduling.annotation.Async;
 
 import java.util.function.Consumer;

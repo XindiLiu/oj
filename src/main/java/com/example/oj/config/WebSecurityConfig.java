@@ -2,23 +2,15 @@ package com.example.oj.config;
 
 import com.example.oj.constant.Role;
 import com.example.oj.interceptor.JwtAuthenticationFilter;
-import com.example.oj.user.UserRepository;
+import com.example.oj.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -28,12 +20,18 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfig {
-	@Autowired
-	UserRepository userRepository;
-	@Autowired
-	JwtAuthenticationFilter jwtAuthFilter;
-	@Autowired
-	AuthenticationProvider authenticationProvider;
+
+	private final UserRepository userRepository;
+	private final JwtAuthenticationFilter jwtAuthFilter;
+	private final AuthenticationProvider authenticationProvider;
+
+	public WebSecurityConfig(UserRepository userRepository,
+			JwtAuthenticationFilter jwtAuthFilter,
+			AuthenticationProvider authenticationProvider) {
+		this.userRepository = userRepository;
+		this.jwtAuthFilter = jwtAuthFilter;
+		this.authenticationProvider = authenticationProvider;
+	}
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -46,7 +44,7 @@ public class WebSecurityConfig {
 								.anyRequest()
 								.permitAll()
 
-						// .authenticated()
+				// .authenticated()
 				)
 
 				// Set anonymous.disable() to make SecurityContextHolder.getContext().getAuthentication() return null

@@ -1,6 +1,6 @@
 package com.example.oj.utils;
 
-import com.example.oj.user.User;
+import com.example.oj.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;

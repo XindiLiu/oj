@@ -4,13 +4,12 @@ import com.example.oj.constant.SubmissionResultType;
 import com.example.oj.exception.CodeTesterUnavailableException;
 import com.example.oj.exception.CodeTestingException;
 import com.example.oj.filesystem.FileService;
-import com.example.oj.problem.Problem;
-import com.example.oj.submission.Submission;
-import com.example.oj.submission.SubmissionStatus;
-import com.example.oj.testcase.TestCase;
-import com.example.oj.testcase.TestCaseService;
+import com.example.oj.entity.Problem;
+import com.example.oj.entity.Submission;
+import com.example.oj.constant.SubmissionStatus;
+import com.example.oj.entity.TestCase;
+import com.example.oj.service.TestCaseService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -25,22 +24,26 @@ import java.util.function.Consumer;
 @Component
 @Slf4j
 public class DockerCodeTester implements CodeTester {
-	@Autowired
-	TestCaseService testCaseService;
-	//	@Autowired
-	//	SubmissionService submissionService;
+
+	private final TestCaseService testCaseService;
+	private final FileService fileService;
+
 	@Value("${DockerCodeTester.docker.image}")
-	String dockerImage;
+	private String dockerImage;
 
 	@Value("${DockerCodeTester.docker.mountFolder}")
-	String dockerMountWorkspace;
+	private String dockerMountWorkspace;
 
 	@Value("${DockerCodeTester.docker.workspace}")
-	String dockerWorkspace;
-	@Autowired
-	FileService fileService;
+	private String dockerWorkspace;
+
 	@Value("${DockerCodeTester.compiledFileName}")
-	String compiledFileName;
+	private String compiledFileName;
+
+	public DockerCodeTester(TestCaseService testCaseService, FileService fileService) {
+		this.testCaseService = testCaseService;
+		this.fileService = fileService;
+	}
 
 	/*
 	 * 1. Create a temp folder as the workspace for the submission.
@@ -84,7 +87,7 @@ public class DockerCodeTester implements CodeTester {
 				} catch (IOException e) {
 					// Use unchecked exception to avoid rollback, handled in global exception handler.
 					log.error("Failed to delete temp folder {} after code testing: {}", tempFolder, e.getMessage());
-//					throw new RuntimeException("Failed to delete temp folder after code testing.", e);
+					//					throw new RuntimeException("Failed to delete temp folder after code testing.", e);
 				}
 			}
 		}
@@ -222,6 +225,5 @@ public class DockerCodeTester implements CodeTester {
 			}
 		}
 	}
-
 
 }

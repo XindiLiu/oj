@@ -1,7 +1,7 @@
 package com.example.oj.utils;
 
 import com.example.oj.constant.Role;
-import com.example.oj.user.User;
+import com.example.oj.entity.User;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SecurityUtil {

@@ -18,8 +18,9 @@ import java.util.Enumeration;
 @Component
 /*
  * Log http requests and responses.
-*/
-public class LoggingFilter extends OncePerRequestFilter {
+ */
+public class
+LoggingFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

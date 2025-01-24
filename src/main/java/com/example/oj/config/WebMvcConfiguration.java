@@ -4,7 +4,7 @@ package com.example.oj.config;
 
 import com.example.oj.interceptor.JwtTokenAdminInterceptor;
 import com.example.oj.interceptor.LoggingFilter;
-import com.example.oj.user.UserRepository;
+import com.example.oj.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,8 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -23,13 +21,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-
-import java.util.List;
 
 /**
  * Configuration class, registers web layer related components
@@ -40,11 +33,17 @@ import java.util.List;
 @EnableSpringDataWebSupport
 public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
-	@Autowired
-	private JwtTokenAdminInterceptor jwtTokenAdminInterceptor;
+	private final JwtTokenAdminInterceptor jwtTokenAdminInterceptor;
+	private final UserRepository userRepository;
 
-	@Autowired
-	UserRepository userRepository;
+	@Value("${frontend.address}")
+	private String frontendAddress;
+
+	public WebMvcConfiguration(JwtTokenAdminInterceptor jwtTokenAdminInterceptor,
+			UserRepository userRepository) {
+		this.jwtTokenAdminInterceptor = jwtTokenAdminInterceptor;
+		this.userRepository = userRepository;
+	}
 
 	//	/**
 	//	 * Register custom interceptor
@@ -61,9 +60,6 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 	public UserDetailsService userDetailsService() {
 		return username -> userRepository.findByUsername(username);
 	}
-
-	@Value("${frontend.address}")
-	private String frontendAddress;
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {

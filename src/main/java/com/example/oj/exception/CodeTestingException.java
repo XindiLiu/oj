@@ -1,6 +1,6 @@
 package com.example.oj.exception;
 
-import com.example.oj.submission.Submission;
+import com.example.oj.entity.Submission;
 
 public class CodeTestingException extends Exception {
 	protected Submission submission;
@@ -8,7 +8,7 @@ public class CodeTestingException extends Exception {
 	public Submission getSubmission() {
 		return submission;
 	}
-	
+
 	public CodeTestingException() {
 	}
 
