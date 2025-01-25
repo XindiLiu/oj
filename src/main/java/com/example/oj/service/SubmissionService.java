@@ -3,6 +3,7 @@ package com.example.oj.service;
 import com.example.oj.codeTester.CodeTester;
 import com.example.oj.constant.ProgrammingLanguage;
 import com.example.oj.constant.SubmissionResultType;
+import com.example.oj.entity.Problem;
 import com.example.oj.entity.Submission;
 import com.example.oj.repository.ProblemRepository;
 import com.example.oj.projection.ProblemSimpleProj;
@@ -12,6 +13,7 @@ import com.example.oj.DTO.SubmissionSimpleDTO;
 import com.example.oj.constant.SubmissionStatus;
 import com.example.oj.entity.TestCase;
 import com.example.oj.entity.User;
+import com.example.oj.exception.IdNotFoundException;
 import com.example.oj.repository.UserRepository;
 import com.example.oj.projection.UserSimpleProj;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +35,7 @@ public class SubmissionService {
 	private final UserProblemResultService userProblemResultService;
 
 	public SubmissionService(SubmissionRepository submissionRepository, ProblemRepository problemRepository,
-			UserRepository userRepository, CodeTester codeTester, UserProblemResultService userProblemResultService) {
+							 UserRepository userRepository, CodeTester codeTester, UserProblemResultService userProblemResultService) {
 		this.submissionRepository = submissionRepository;
 		this.problemRepository = problemRepository;
 		this.userRepository = userRepository;
@@ -64,7 +66,14 @@ public class SubmissionService {
 
 	}
 
-	public Submission submit(Submission submission) {
+	public Submission submit(Submission submission, Long problemId) throws IdNotFoundException {
+		submission.setStatus(SubmissionStatus.SUBMITTED);
+		if (submission.getFileName() == null || submission.getFileName().isEmpty()) {
+			submission.setFileName("unnamed." + submission.getLanguage().fileExtension);
+		}
+		Problem problem = problemRepository.findById(problemId)
+				.orElseThrow(() -> new IdNotFoundException(Problem.class, problemId));
+		submission.setProblem(problem);
 		User user = SecurityUtil.getCurrentUser();
 		submission.setUser(user);
 		submission.setStatus(SubmissionStatus.RUNNING);
@@ -125,8 +134,8 @@ public class SubmissionService {
 				.findFastes(id, language,
 						//						SubmissionStatus.FINISHED, SubmissionResultType.AC, ScrollPosition.offset())
 						SubmissionStatus.FINISHED, SubmissionResultType.AC, PageRequest.of(0, 10))
-		//				.toList()
-		;
+				//				.toList()
+				;
 		return submission;
 	}
 

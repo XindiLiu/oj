@@ -3,6 +3,7 @@ package com.example.oj.controller;
 import com.example.oj.DTO.TestCaseResponseDTO;
 import com.example.oj.common.Result;
 import com.example.oj.entity.TestCase;
+import com.example.oj.exception.FileTypeException;
 import com.example.oj.exception.IdNotFoundException;
 import com.example.oj.filesystem.FileService;
 import com.example.oj.entity.Problem;
@@ -25,8 +26,8 @@ public class TestCaseController {
 	private final FileService fileService;
 
 	public TestCaseController(TestCaseService testCaseService,
-			ProblemService problemService,
-			FileService fileService) {
+							  ProblemService problemService,
+							  FileService fileService) {
 		this.testCaseService = testCaseService;
 		this.problemService = problemService;
 		this.fileService = fileService;
@@ -45,18 +46,15 @@ public class TestCaseController {
 	public Result<List<TestCaseResponseDTO>> save(
 			@PathVariable Long problemId,
 			@RequestParam("testCaseZipFile") MultipartFile testCaseZipFile) throws IdNotFoundException {
-		if (problemService.getById(problemId) == null) {
-			throw new IdNotFoundException(Problem.class, problemId);
-		}
-		// Validate that the uploaded file is a ZIP
-		if (testCaseZipFile.isEmpty() || !fileService.isZip(testCaseZipFile)) {
-			return Result.fail("Invalid file");
-		}
+
 		List<TestCase> testCases;
 		try {
 			testCases = testCaseService.saveTestCases(testCaseZipFile, problemId);
 		} catch (IOException e) {
 			log.error("Failed to save test cases:{}", e.getMessage());
+			return Result.fail();
+		} catch (FileTypeException e) {
+			log.error(e.getMessage());
 			return Result.fail();
 		}
 

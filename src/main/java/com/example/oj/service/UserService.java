@@ -1,6 +1,7 @@
 package com.example.oj.service;
 
 import com.example.oj.DTO.UserLoginDTO;
+import com.example.oj.DTO.UserUpdateDTO;
 import com.example.oj.common.Result;
 import com.example.oj.constant.Role;
 import com.example.oj.entity.User;
@@ -8,6 +9,7 @@ import com.example.oj.exception.AlreadyLoggedInException;
 import com.example.oj.exception.IdNotFoundException;
 import com.example.oj.repository.UserRepository;
 import com.example.oj.projection.UserSimpleProj;
+import com.example.oj.utils.BeanCopyUtils;
 import com.example.oj.utils.JwtUtil;
 import com.example.oj.utils.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +32,7 @@ public class UserService {
 	private final JwtUtil jwtUtil;
 
 	public UserService(UserRepository userRepository, AuthenticationManager authenticationManager,
-			PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+					   PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
 		this.userRepository = userRepository;
 		this.authenticationManager = authenticationManager;
 		this.passwordEncoder = passwordEncoder;
@@ -92,8 +94,20 @@ public class UserService {
 		return userRepository.existsByUsername(username);
 	}
 
-	public User update(User user) {
-		return userRepository.save(user);
+	public User update(UserUpdateDTO user) throws IdNotFoundException {
+		User currentUser;
+		if (user.getId() != null) {
+			currentUser = this.getById(user.getId());
+			if (currentUser != null) { // Should not happen with preauthorize.
+				BeanCopyUtils.copyNonNullSrcProperties(user, currentUser);
+			} else {
+				throw new IdNotFoundException(User.class, user.getId());
+			}
+		} else {
+			throw new IdNotFoundException(User.class, user.getId());
+		}
+		return userRepository.save(currentUser);
+
 	}
 
 	public UserSimpleProj findUserSimpleById(Long id) {

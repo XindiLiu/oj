@@ -29,14 +29,8 @@ public class UserProblemResultController {
 		if (SecurityUtil.isGuest()) {
 			return null;
 		}
-		Long userId = SecurityUtil.getCurrentUser().getId();
-		var optionalResult = userProblemService.getUserProblem(userId, problemId);
-		if (optionalResult.isPresent()) {
-			UserProblemResult bestSubmission = optionalResult.get();
-			bestSubmission.setSubmissionId(bestSubmission.getBestSubmission().getId());
-			return Result.success(bestSubmission);
-		} else {
-			return Result.success(null);
-		}
+
+		UserProblemResult bestSubmission = userProblemService.getUserProblem(problemId);
+		return Result.success(bestSubmission);
 	}
 }

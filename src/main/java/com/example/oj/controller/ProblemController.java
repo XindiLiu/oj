@@ -29,12 +29,12 @@ public class ProblemController {
 	@PostMapping("/add")
 	public Result add(@RequestBody ProblemCreateDTO problemCreateDTO) {
 		Problem problem = Problem.emptyProblem();
-		if (problemCreateDTO.getSampleIo() != null) {
-			var sampleList = problemCreateDTO.getSampleIo();
-			for (int i = 0; i < sampleList.size(); i++) {
-				sampleList.get(i).setSampleId(i + 1);
-			}
-		}
+//		if (problemCreateDTO.getSampleIo() != null) {
+//			var sampleList = problemCreateDTO.getSampleIo();
+//			for (int i = 0; i < sampleList.size(); i++) {
+//				sampleList.get(i).setSampleId(i + 1);
+//			}
+//		}
 		BeanUtils.copyProperties(problemCreateDTO, problem);
 		BeanUtils.copyProperties(problemCreateDTO, problem.getProblemDetail());
 		ProblemDetail problemDetail = problemService.add(problem);
@@ -46,12 +46,13 @@ public class ProblemController {
 	public Result update(@PathVariable Long id, @RequestBody ProblemCreateDTO problemCreateDTO)
 			throws IdNotFoundException {
 		// Manually assign a number to the sample input and output
-		if (problemCreateDTO.getSampleIo() != null) {
-			var sampleList = problemCreateDTO.getSampleIo();
-			for (int i = 0; i < sampleList.size(); i++) {
-				sampleList.get(i).setSampleId(i + 1);
-			}
-		}
+		// Handled by frontend
+//		if (problemCreateDTO.getSampleIo() != null) {
+//			var sampleList = problemCreateDTO.getSampleIo();
+//			for (int i = 0; i < sampleList.size(); i++) {
+//				sampleList.get(i).setSampleId(i + 1);
+//			}
+//		}
 		ProblemDetail problemDetail = problemService.update(id, problemCreateDTO);
 		return Result.success(problemDetail);
 	}
@@ -85,7 +86,7 @@ public class ProblemController {
 	 */
 	@GetMapping("/page")
 	public Result getPagedProblemUserDTOs(@RequestParam int pageNumber, @RequestParam int pageSize,
-			ProblemSearchDTO problemSearchDTO) {
+										  ProblemSearchDTO problemSearchDTO) {
 		// Fetch the paged data
 		var problemUserDTOPage = problemService.getPagedProblemWithUser(pageNumber, pageSize, problemSearchDTO);
 		return Result.success(problemUserDTOPage);

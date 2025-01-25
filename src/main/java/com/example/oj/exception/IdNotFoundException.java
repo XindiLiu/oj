@@ -5,4 +5,11 @@ public class IdNotFoundException extends Exception {
 	public IdNotFoundException(Class<?> clazz, Object id) {
 		super(String.format("%s with id %s not found", clazz.getSimpleName(), id));
 	}
+
+	public IdNotFoundException() {
+	}
+
+	public IdNotFoundException(String message) {
+		super(message);
+	}
 }

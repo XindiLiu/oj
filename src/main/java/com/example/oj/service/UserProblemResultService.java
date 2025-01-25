@@ -1,11 +1,14 @@
 package com.example.oj.service;
 
+import com.example.oj.common.Result;
 import com.example.oj.entity.Problem;
 import com.example.oj.entity.Submission;
 import com.example.oj.entity.User;
 import com.example.oj.entity.UserProblemResult;
+import com.example.oj.exception.IdNotFoundException;
 import com.example.oj.repository.UserProblemResultRepository;
 import com.example.oj.repository.UserRepository;
+import com.example.oj.utils.SecurityUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -24,7 +27,7 @@ public class UserProblemResultService {
 	private final EntityManager entityManager;
 
 	public UserProblemResultService(UserProblemResultRepository userProblemResultRepository,
-			UserRepository userRepository, EntityManager entityManager) {
+									UserRepository userRepository, EntityManager entityManager) {
 		this.userProblemResultRepository = userProblemResultRepository;
 		this.userRepository = userRepository;
 		this.entityManager = entityManager;
@@ -58,9 +61,10 @@ public class UserProblemResultService {
 		}
 	}
 
-	public Optional<UserProblemResult> getUserProblem(Long userId, Long problemId) {
-		return userProblemResultRepository.findById_UserIdAndId_ProblemId(userId, problemId);
-
+	public UserProblemResult getUserProblem(Long problemId) {
+		Long userId = SecurityUtil.getCurrentUser().getId();
+		UserProblemResult userProblemResult = userProblemResultRepository.findById_UserIdAndId_ProblemId(userId, problemId).orElse(null);
+		return userProblemResult;
 	}
 
 	private void updateUserProblem(UserProblemResult userProblemResult, Submission newSubmission) {

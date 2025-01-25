@@ -1,6 +1,10 @@
 package com.example.oj.service;
 
+import com.example.oj.common.Result;
+import com.example.oj.entity.Problem;
 import com.example.oj.entity.TestCase;
+import com.example.oj.exception.FileTypeException;
+import com.example.oj.exception.IdNotFoundException;
 import com.example.oj.filesystem.FileService;
 import com.example.oj.repository.ProblemRepository;
 import com.example.oj.repository.TestCaseRepository;
@@ -70,8 +74,14 @@ public class TestCaseService {
 	 * Unzip the file in a temporary directory, and save the test cases to the database.
 	 */
 	@Transactional
-	public List<TestCase> saveTestCases(MultipartFile zipFile, Long problemId) throws IOException {
-
+	public List<TestCase> saveTestCases(MultipartFile zipFile, Long problemId) throws IOException, IdNotFoundException, FileTypeException {
+		if (problemRepository.getById(problemId) == null) {
+			throw new IdNotFoundException(Problem.class, problemId);
+		}
+		// Validate that the uploaded file is a ZIP
+		if (zipFile.isEmpty() || !fileService.isZip(zipFile)) {
+			throw new FileTypeException("Empty file or the file is not a zip file");
+		}
 		Path zipPath = fileService.extractZip(zipFile);
 
 		// Match in and out files

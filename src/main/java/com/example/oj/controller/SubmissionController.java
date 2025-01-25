@@ -48,18 +48,8 @@ public class SubmissionController {
 		Submission submission = new Submission();
 		submission.setLanguage(ProgrammingLanguage.valueOf(submissionDTO.getLanguage()));
 		BeanUtils.copyProperties(submissionDTO, submission);
-
-		if (submission.getFileName() == null || submission.getFileName().isEmpty()) {
-			submission.setFileName("unnamed." + submission.getLanguage().fileExtension);
-		}
-		Problem problem = problemService.getById(id);
-		if (problem == null) {
-			throw new IdNotFoundException(Problem.class, id);
-		}
-		submission.setProblem(problem);
-		submission.setStatus(SubmissionStatus.SUBMITTED);
 		Submission submissionResult = null;
-		submissionResult = submissionService.submit(submission);
+		submissionResult = submissionService.submit(submission, id);
 		return Result.success(submissionResult);
 	}
 

@@ -32,18 +32,19 @@ public class UserController {
 	}
 
 	@PostMapping("/login")
-	public Result login(@RequestBody UserLoginDTO userLogin, HttpServletRequest request, HttpServletResponse response) {
+	public Result login(@RequestBody UserLoginDTO userLogin, HttpServletRequest request, HttpServletResponse response) throws AlreadyLoggedInException {
 
 		log.info("login: {}", userLogin);
 		String jwt = null;
-		try {
-			jwt = userService.login(userLogin);
-		} catch (AuthenticationException e) {
-			return Result.fail("Invalid username or password.");
-		} catch (AlreadyLoggedInException e) {
-			// Should not happen. Handled by front end.
-			return Result.fail("Already logged in.");
-		}
+		jwt = userService.login(userLogin);
+//		try {
+//			jwt = userService.login(userLogin);
+//		} catch (AuthenticationException e) {
+//			return Result.fail("Invalid username or password.");
+//		} catch (AlreadyLoggedInException e) {
+//			// Should not happen. Handled by front end.
+//			return Result.fail("Already logged in.");
+//		}
 		return Result.success(jwt);
 	}
 
@@ -58,11 +59,12 @@ public class UserController {
 		User user = new User();
 		BeanUtils.copyProperties(userRegister, user);
 		User savedUser = userService.register(user);
-		if (savedUser == null) {
-			return Result.fail("Username exist");
-		} else {
-			return Result.success(savedUser);
-		}
+//		if (savedUser == null) {
+//			return Result.fail("Username exist");
+//		} else {
+//			return Result.success(savedUser);
+//		}
+		return Result.success(savedUser);
 	}
 
 	@GetMapping("/user/{id}")
@@ -84,18 +86,18 @@ public class UserController {
 	@PreAuthorize("@userSecurity.isCurrentUser(#user.id)")
 	public Result update(@RequestBody UserUpdateDTO user) throws IdNotFoundException {
 		log.info("Update user info: {}", user);
-		User currentUser;
-		if (user.getId() != null) {
-			currentUser = userService.getById(user.getId());
-			if (currentUser != null) { // Should not happen with preauthorize.
-				BeanCopyUtils.copyNonNullSrcProperties(user, currentUser);
-			} else {
-				throw new IdNotFoundException(User.class, user.getId());
-			}
-		} else {
-			return Result.fail("No user id");
-		}
-		userService.update(currentUser);
+//		User currentUser;
+//		if (user.getId() != null) {
+//			currentUser = userService.getById(user.getId());
+//			if (currentUser != null) { // Should not happen with preauthorize.
+//				BeanCopyUtils.copyNonNullSrcProperties(user, currentUser);
+//			} else {
+//				throw new IdNotFoundException(User.class, user.getId());
+//			}
+//		} else {
+//			return Result.fail("No user id");
+//		}
+		userService.update(user);
 		return Result.success();
 	}
 
