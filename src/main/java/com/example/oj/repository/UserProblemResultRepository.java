@@ -15,7 +15,6 @@ public interface UserProblemResultRepository extends CrudRepository<UserProblemR
 
 	Optional<UserProblemResult> findById(UserProblemResult.UserProblemId id);
 
-	Optional<UserProblemResult> findById_UserIdAndStatus(Long userId, SubmissionResultType status);
 
 	Page<UserProblemResult> findAll(Specification<Problem> specification,
 									Pageable pageable);

@@ -11,13 +11,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.util.Calendar;
 import java.util.List;
 
+// TODO: 看lombok annotation
+// TODO: controller 不出现 entity， 只和service交互, dto在service里转换成entity
 @Data
 @NoArgsConstructor
-@Getter
-@Setter
 @AllArgsConstructor
 @Entity
-@ToString
 @Table(name = "problem")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 public class Problem {
@@ -25,7 +24,6 @@ public class Problem {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
-	//	@Column(name = "title", unique = true, nullable = false, updatable = false)
 	@Column(name = "title")
 	String title;
 	@Column(name = "difficulty")

@@ -51,14 +51,6 @@ LoggingFilter extends OncePerRequestFilter {
 			msg.append("?").append(queryString);
 		}
 
-		// Log headers
-		//        Enumeration<String> headerNames = request.getHeaderNames();
-		//        msg.append("\nHeaders: ");
-		//        while (headerNames.hasMoreElements()) {
-		//            String headerName = headerNames.nextElement();
-		//            msg.append(headerName).append("=").append(request.getHeader(headerName)).append(", ");
-		//        }
-
 		// Log body
 		byte[] content = request.getContentAsByteArray();
 		if (content.length > 0) {
@@ -74,13 +66,6 @@ LoggingFilter extends OncePerRequestFilter {
 		msg.append("Response: ")
 				.append("Status=").append(response.getStatus())
 				.append(", Time Taken=").append(duration).append("ms");
-
-		// Log headers
-		//        Collection<String> headerNames = response.getHeaderNames();
-		//        msg.append("\nHeaders: ");
-		//        for (String headerName : headerNames) {
-		//            msg.append(headerName).append("=").append(response.getHeader(headerName)).append(", ");
-		//        }
 
 		// Log body
 		byte[] content = response.getContentAsByteArray();

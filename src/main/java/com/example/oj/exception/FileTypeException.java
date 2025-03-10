@@ -1,6 +1,6 @@
 package com.example.oj.exception;
 
-public class FileTypeException extends Exception {
+public class FileTypeException extends RuntimeException {
 	public FileTypeException() {
 	}
 

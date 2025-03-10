@@ -25,30 +25,6 @@ public class FileService {
 	public final static String inputFileExtension = "in";
 	public final static String outputFileExtension = "out";
 
-	//    Path tempDirPath = Paths.get(fileConfig.tempDir);
-	public void uploadFile(MultipartFile file, String fileName) {
-		File dir = new File(fileConfig.rootDir);
-		if (!dir.exists()) {
-			dir.mkdirs();
-		}
-		try {
-			file.transferTo(new File(dir.getAbsolutePath() + File.separator + fileName));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public void uploadZip(MultipartFile file, String fileName) {
-		File dir = new File(fileConfig.rootDir);
-		if (!dir.exists()) {
-			dir.mkdirs();
-		}
-		try {
-			file.transferTo(new File(dir.getAbsolutePath() + File.separator + fileName));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
 
 	public Path mkTempDir(String subDir, String name) throws IOException {
 		Path tempDirPath = Paths.get(fileConfig.tempDir).resolve(subDir); // resolve: add other after this
@@ -76,31 +52,6 @@ public class FileService {
 		return tempDir;
 	}
 
-	public Path mkDir(Path dir) throws IOException {
-		Path dirPath = null;
-		try {
-			dirPath = Files.createDirectories(dir);
-		} catch (IOException e) {
-			log.error("Error creating dir {}: {}", dir, e.getMessage());
-			throw new IOException(e);
-		}
-		return dirPath;
-	}
-
-	public Path copyFile(Path source, Path target) throws IOException {
-		Path path = null;
-		try {
-			if (Files.exists(target)) {
-				log.warn("Replace already existing file {}.", target);
-			}
-			path = Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
-		} catch (IOException e) {
-			log.error("Error copying from {} to {}: {}", source, target, e.getMessage());
-			throw new IOException(e);
-
-		}
-		return path;
-	}
 
 	public boolean rmDir(Path dir) throws IOException {
 		try {

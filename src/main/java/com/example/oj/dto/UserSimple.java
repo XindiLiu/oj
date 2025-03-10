@@ -1,4 +1,4 @@
-package com.example.oj.entity;
+package com.example.oj.dto;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,6 @@ import lombok.ToString;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "user")
 public class UserSimple {

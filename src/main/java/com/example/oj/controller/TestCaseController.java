@@ -1,16 +1,15 @@
 package com.example.oj.controller;
 
-import com.example.oj.DTO.TestCaseResponseDTO;
-import com.example.oj.common.Result;
+import com.example.oj.dto.TestCaseResponseDTO;
+import com.example.oj.constant.Result;
 import com.example.oj.entity.TestCase;
 import com.example.oj.exception.FileTypeException;
 import com.example.oj.exception.IdNotFoundException;
 import com.example.oj.filesystem.FileService;
-import com.example.oj.entity.Problem;
 import com.example.oj.service.ProblemService;
 import com.example.oj.service.TestCaseService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,19 +18,12 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 public class TestCaseController {
 
 	private final TestCaseService testCaseService;
 	private final ProblemService problemService;
 	private final FileService fileService;
-
-	public TestCaseController(TestCaseService testCaseService,
-							  ProblemService problemService,
-							  FileService fileService) {
-		this.testCaseService = testCaseService;
-		this.problemService = problemService;
-		this.fileService = fileService;
-	}
 
 	/*
 	 * Upload test cases for a problem. This will replace all existing test cases for the problem.
@@ -74,12 +66,5 @@ public class TestCaseController {
 		List<TestCase> testCases = testCaseService.getByProblemId(problemId);
 		return Result.success(testCases);
 	}
-
-	// @DeleteMapping("/testcase/{id}")
-	// @ResponseBody
-	// public Result delete(@PathVariable Long testCaseId) {
-	// 	testCaseService.delete(testCaseId);
-	// 	return Result.success();
-	// }
 
 }

@@ -1,6 +1,6 @@
 package com.example.oj.interceptor;
 
-import com.example.oj.common.Result;
+import com.example.oj.constant.Result;
 import com.example.oj.utils.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.MalformedJwtException;

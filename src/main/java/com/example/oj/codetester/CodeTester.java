@@ -1,4 +1,4 @@
-package com.example.oj.codeTester;
+package com.example.oj.codetester;
 
 import com.example.oj.entity.Problem;
 import com.example.oj.entity.Submission;

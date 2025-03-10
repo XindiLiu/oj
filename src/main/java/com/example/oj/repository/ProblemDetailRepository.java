@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
+// TODO：看jpa
 public interface ProblemDetailRepository extends JpaRepository<ProblemDetail, Long> {
 
 	Optional<ProblemDetail> findById(Long id);

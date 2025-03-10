@@ -1,40 +1,32 @@
 package com.example.oj.controller;
 
-import com.example.oj.common.Result;
+import com.example.oj.constant.Result;
 import com.example.oj.entity.Problem;
 import com.example.oj.exception.IdNotFoundException;
-import com.example.oj.DTO.ProblemCreateDTO;
-import com.example.oj.DTO.ProblemSearchDTO;
+import com.example.oj.dto.ProblemCreateDTO;
+import com.example.oj.dto.ProblemSearchDTO;
 import com.example.oj.service.ProblemService;
-import com.example.oj.projection.ProblemSimpleProj;
+import com.example.oj.dto.ProblemSimpleProj;
 import com.example.oj.entity.ProblemDetail;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+// TODO: 在controller里用swagger
 @RestController
 @RequestMapping("/problem")
 @Slf4j
+@RequiredArgsConstructor
 public class ProblemController {
 
 	private final ProblemService problemService;
-
-	public ProblemController(ProblemService problemService) {
-		this.problemService = problemService;
-	}
 
 	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/add")
 	public Result add(@RequestBody ProblemCreateDTO problemCreateDTO) {
 		Problem problem = Problem.emptyProblem();
-//		if (problemCreateDTO.getSampleIo() != null) {
-//			var sampleList = problemCreateDTO.getSampleIo();
-//			for (int i = 0; i < sampleList.size(); i++) {
-//				sampleList.get(i).setSampleId(i + 1);
-//			}
-//		}
 		BeanUtils.copyProperties(problemCreateDTO, problem);
 		BeanUtils.copyProperties(problemCreateDTO, problem.getProblemDetail());
 		ProblemDetail problemDetail = problemService.add(problem);
@@ -45,25 +37,9 @@ public class ProblemController {
 	@PostMapping("/update/{id}")
 	public Result update(@PathVariable Long id, @RequestBody ProblemCreateDTO problemCreateDTO)
 			throws IdNotFoundException {
-		// Manually assign a number to the sample input and output
-		// Handled by frontend
-//		if (problemCreateDTO.getSampleIo() != null) {
-//			var sampleList = problemCreateDTO.getSampleIo();
-//			for (int i = 0; i < sampleList.size(); i++) {
-//				sampleList.get(i).setSampleId(i + 1);
-//			}
-//		}
 		ProblemDetail problemDetail = problemService.update(id, problemCreateDTO);
 		return Result.success(problemDetail);
 	}
-
-	//	@GetMapping("/{id}")
-	//	public Result getById(@PathVariable Long id) {
-	//		Problem problem = problemService.getById(id);
-	//		problem.setProblemDetail(null);
-	//		//        problem.getProblemDetail();
-	//		return Result.success(problem);
-	//	}
 
 	/*
 	 * Full description of a problem.

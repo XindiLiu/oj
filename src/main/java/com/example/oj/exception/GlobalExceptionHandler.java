@@ -1,6 +1,6 @@
 package com.example.oj.exception;
 
-import com.example.oj.common.Result;
+import com.example.oj.constant.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;

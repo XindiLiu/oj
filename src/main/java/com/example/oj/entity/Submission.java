@@ -17,7 +17,6 @@ import java.util.Calendar;
 // Default value does not work with NoArgsConstructor. Create explicit constructor instead.
 //@NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Entity
 @DynamicUpdate
 @DynamicInsert

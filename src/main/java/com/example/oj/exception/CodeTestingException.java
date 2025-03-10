@@ -2,7 +2,7 @@ package com.example.oj.exception;
 
 import com.example.oj.entity.Submission;
 
-public class CodeTestingException extends Exception {
+public class CodeTestingException extends RuntimeException {
 	protected Submission submission;
 
 	public Submission getSubmission() {

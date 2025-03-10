@@ -2,7 +2,7 @@ package com.example.oj.exception;
 
 import com.example.oj.entity.Submission;
 
-public class CodeTesterUnavailableException extends Exception {
+public class CodeTesterUnavailableException extends RuntimeException {
 	protected Submission submission;
 
 	public Submission getSubmission() {

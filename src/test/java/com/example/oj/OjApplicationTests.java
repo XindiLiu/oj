@@ -13,6 +13,8 @@ import java.nio.file.Paths;
 
 import org.apache.commons.io.FilenameUtils;
 
+// TODO：Junit mockito wiremock spring test
+// TODO: Unit test 和 integration test
 @SpringBootTest
 class OjApplicationTests {
 

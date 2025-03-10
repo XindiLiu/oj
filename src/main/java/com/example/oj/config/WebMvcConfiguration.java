@@ -22,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 /**
@@ -39,23 +40,21 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 	@Value("${frontend.address}")
 	private String frontendAddress;
 
+//	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//		registry.addResourceHandler("/swagger-ui/**")
+//				.addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/");
+///*		registry.addResourceHandler("/swagger-ui.html")
+//				.addResourceLocations("classpath:/META-INF/resources/");*/
+//		registry.addResourceHandler("/v3/api-docs/**")
+//				.addResourceLocations("classpath:/META-INF/resources/");
+//	}
+
 	public WebMvcConfiguration(JwtTokenAdminInterceptor jwtTokenAdminInterceptor,
-			UserRepository userRepository) {
+							   UserRepository userRepository) {
 		this.jwtTokenAdminInterceptor = jwtTokenAdminInterceptor;
 		this.userRepository = userRepository;
 	}
 
-	//	/**
-	//	 * Register custom interceptor
-	//	 *
-	//	 * @param registry
-	//	 */
-	//	protected void addInterceptors(InterceptorRegistry registry) {
-	//		log.info("Starting to register custom interceptors...");
-	//		registry.addInterceptor(jwtTokenAdminInterceptor)
-	//				.excludePathPatterns("/register")
-	//				.excludePathPatterns("/login");
-	//	}
 	@Bean
 	public UserDetailsService userDetailsService() {
 		return username -> userRepository.findByUsername(username);
@@ -96,20 +95,5 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 		registrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE); // Set highest precedence
 		return registrationBean;
 	}
-	//	/**
-	//	 * Set static resource mapping
-	//	 * @param registry
-	//	 */
-	//    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-	//        registry.addResourceHandler("/doc.html").addResourceLocations("classpath:/META-INF/resources/");
-	//        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-	//    }
-	//
-	//    @Override
-	//    protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-	//        log.info("Extending message converters");
-	//        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-	//        converter.setObjectMapper(new JacksonObjectMapper());
-	//        converters.add(0, converter);
-	//    }
+
 }

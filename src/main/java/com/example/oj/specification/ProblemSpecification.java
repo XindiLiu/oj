@@ -1,6 +1,6 @@
 package com.example.oj.specification;
 
-import com.example.oj.DTO.ProblemSearchDTO;
+import com.example.oj.dto.ProblemSearchDTO;
 import com.example.oj.constant.SubmissionResultType;
 import com.example.oj.entity.Problem;
 import com.example.oj.entity.UserProblemResult;

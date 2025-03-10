@@ -1,10 +1,8 @@
-package com.example.oj.DTO;
+package com.example.oj.dto;
 
 import com.example.oj.constant.ProgrammingLanguage;
 import com.example.oj.constant.SubmissionResultType;
 import com.example.oj.constant.SubmissionStatus;
-import com.example.oj.entity.ProblemSimple;
-import com.example.oj.entity.UserSimple;
 import lombok.Data;
 import lombok.ToString;
 

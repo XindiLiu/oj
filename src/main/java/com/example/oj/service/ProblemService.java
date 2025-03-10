@@ -1,12 +1,12 @@
 package com.example.oj.service;
 
-import com.example.oj.DTO.ProblemCreateDTO;
-import com.example.oj.DTO.ProblemSearchDTO;
+import com.example.oj.dto.ProblemCreateDTO;
+import com.example.oj.dto.ProblemSearchDTO;
 import com.example.oj.entity.Problem;
 import com.example.oj.exception.IdNotFoundException;
-import com.example.oj.projection.ProblemSimpleProj;
+import com.example.oj.dto.ProblemSimpleProj;
 import com.example.oj.specification.ProblemSpecification;
-import com.example.oj.DTO.ProblemUserDTO;
+import com.example.oj.dto.ProblemUserDTO;
 import com.example.oj.entity.ProblemDetail;
 import com.example.oj.repository.ProblemDetailRepository;
 import com.example.oj.repository.ProblemRepository;
@@ -18,6 +18,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProblemService {
 	private final ProblemRepository problemRepository;
 	private final ProblemDetailRepository detailRepository;
@@ -34,15 +36,6 @@ public class ProblemService {
 	@PersistenceContext
 	private final EntityManager entityManager;
 
-	public ProblemService(ProblemRepository problemRepository, ProblemDetailRepository detailRepository,
-						  UserProblemResultService userProblemResultService, EntityManager entityManager) {
-		this.problemRepository = problemRepository;
-		this.detailRepository = detailRepository;
-		this.userProblemResultService = userProblemResultService;
-		this.entityManager = entityManager;
-	}
-
-	@Transactional
 	public Problem getById(Long id) {
 		Problem problem = problemRepository.getById(id);
 		return problem;
@@ -93,7 +86,6 @@ public class ProblemService {
 	public Page<ProblemUserDTO> getPagedProblemWithUser(int pageNumber, int pageSize,
 														ProblemSearchDTO problemSearchDTO) {
 		Pageable pageable = PageRequest.of(pageNumber, pageSize);
-		// User user = SecurityUtil.getCurrentUser();
 		Long userId = problemSearchDTO.getFilterUserId();
 		if (userId == null) {
 			return getPagedProblem(pageNumber, pageSize, problemSearchDTO);

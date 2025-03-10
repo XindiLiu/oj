@@ -53,6 +53,4 @@ public class SubmissionSpecification {
 			return cb.equal(root.get("language"), language);
 		};
 	}
-
-	// Add more Specifications as needed
 }

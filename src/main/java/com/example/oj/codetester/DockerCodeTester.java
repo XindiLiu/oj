@@ -1,4 +1,4 @@
-package com.example.oj.codeTester;
+package com.example.oj.codetester;
 
 import com.example.oj.constant.SubmissionResultType;
 import com.example.oj.exception.CodeTesterUnavailableException;
@@ -91,9 +91,7 @@ public class DockerCodeTester implements CodeTester {
 				}
 			}
 		}
-
 		afterCodeTesting.accept(submission);
-
 	}
 
 	private Submission testSubmission(Problem problem, Submission submission, Path tempFolder, Path compiledFile)

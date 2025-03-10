@@ -1,4 +1,4 @@
-package com.example.oj.DTO;
+package com.example.oj.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,5 +15,4 @@ public class UserPasswordUpdateDTO implements Serializable {
 	public Long id;
 	public String oldPassword;
 	public String newPassword;
-//    public Long score;
 }

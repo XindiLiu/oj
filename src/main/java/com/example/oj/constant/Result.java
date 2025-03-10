@@ -1,11 +1,10 @@
-package com.example.oj.common;
+package com.example.oj.constant;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.Serializable;
 

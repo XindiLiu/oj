@@ -1,4 +1,4 @@
-package com.example.oj.projection;
+package com.example.oj.dto;
 
 
 public interface ProblemSimpleProj {

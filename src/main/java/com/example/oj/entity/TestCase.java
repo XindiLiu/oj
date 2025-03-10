@@ -4,12 +4,14 @@ import com.example.oj.entity.Problem;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = "problem") // Exclude to prevent infinite recursion

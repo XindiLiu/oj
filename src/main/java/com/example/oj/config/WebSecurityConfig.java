@@ -26,8 +26,8 @@ public class WebSecurityConfig {
 	private final AuthenticationProvider authenticationProvider;
 
 	public WebSecurityConfig(UserRepository userRepository,
-			JwtAuthenticationFilter jwtAuthFilter,
-			AuthenticationProvider authenticationProvider) {
+							 JwtAuthenticationFilter jwtAuthFilter,
+							 AuthenticationProvider authenticationProvider) {
 		this.userRepository = userRepository;
 		this.jwtAuthFilter = jwtAuthFilter;
 		this.authenticationProvider = authenticationProvider;
@@ -39,12 +39,10 @@ public class WebSecurityConfig {
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests( // Allow all requests, use method level security.
 						(authorize) -> authorize
-								//								.requestMatchers("/register", "/login")
-								//								.permitAll()
+								.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 								.anyRequest()
 								.permitAll()
 
-				// .authenticated()
 				)
 
 				// Set anonymous.disable() to make SecurityContextHolder.getContext().getAuthentication() return null

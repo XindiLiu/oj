@@ -1,4 +1,4 @@
-package com.example.oj.DTO;
+package com.example.oj.dto;
 
 import com.example.oj.constant.SubmissionResultType;
 import com.example.oj.entity.Problem;

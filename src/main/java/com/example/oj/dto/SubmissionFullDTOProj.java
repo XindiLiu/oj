@@ -1,4 +1,4 @@
-package com.example.oj.projection;
+package com.example.oj.dto;
 
 import com.example.oj.constant.ProgrammingLanguage;
 import com.example.oj.constant.SubmissionResultType;

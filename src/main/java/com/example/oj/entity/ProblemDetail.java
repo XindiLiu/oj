@@ -14,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@ToString
 @Table(name = "problem_detail")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer"})
 @DynamicUpdate // Use dynamic update. Otherwise not changed columns will be overwritten.
@@ -45,7 +44,6 @@ public class ProblemDetail {
 	@CollectionTable(name = "problem_sample_io", joinColumns = @JoinColumn(name = "id")) // 2
 	List<SamplePair> sampleIo;
 
-	@ToString
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor

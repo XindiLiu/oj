@@ -1,7 +1,7 @@
 package com.example.oj.repository;
 
 import com.example.oj.entity.User;
-import com.example.oj.projection.UserSimpleProj;
+import com.example.oj.dto.UserSimpleProj;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -40,11 +40,6 @@ public interface UserRepository extends CrudRepository<User, Long>, PagingAndSor
 	@Modifying
 	@Query("update User u set u.password = :password where u.id = :id")
 	int updatePasswordById(Long id, String password);
-
-	//	@Modifying
-	//	@Query("update User u set u.password = :newPassword where u.id = :id and u.password = :oldPassword")
-	//	int updatePassword(Long id, String oldPassword, String newPassword);
-
 
 	@Query("SELECT u FROM User u ORDER BY u.score DESC")
 	List<User> findAllUsersOrderByScore();

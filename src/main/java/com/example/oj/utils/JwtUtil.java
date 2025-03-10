@@ -29,9 +29,6 @@ public class JwtUtil {
 
 	/**
 	 * Generate JWT
-	 *
-	 * @param user the user for whom the token is generated
-	 * @return the JWT string
 	 */
 	public String generateJWT(User user) {
 		log.info("Generating JWT at {}", System.currentTimeMillis());
@@ -50,9 +47,6 @@ public class JwtUtil {
 
 	/**
 	 * Extract token from the request cookies
-	 *
-	 * @param request the HTTP request
-	 * @return the token string if present, otherwise null
 	 */
 	public String getToken(HttpServletRequest request) {
 		if (request.getCookies() == null) {
@@ -68,9 +62,6 @@ public class JwtUtil {
 
 	/**
 	 * Get claims from the token
-	 *
-	 * @param token the JWT token
-	 * @return the Claims object
 	 */
 	public Claims getClaims(String token) {
 		Claims claims = Jwts.parser().setSigningKey(key).build().parseClaimsJws(token).getBody();
@@ -79,9 +70,6 @@ public class JwtUtil {
 
 	/**
 	 * Get user ID from the token
-	 *
-	 * @param token the JWT token
-	 * @return the user ID
 	 */
 	public Long getUserId(String token) {
 		Claims claims = getClaims(token);
@@ -91,9 +79,6 @@ public class JwtUtil {
 
 	/**
 	 * Get username from the token
-	 *
-	 * @param token the JWT token
-	 * @return the username
 	 */
 	public String getUsername(String token) {
 		Claims claims = getClaims(token);
@@ -102,9 +87,6 @@ public class JwtUtil {
 
 	/**
 	 * Get token expiration time
-	 *
-	 * @param token the JWT token
-	 * @return the expiration date
 	 */
 	public Date getExpireTime(String token) {
 		Claims claims = getClaims(token);
@@ -123,10 +105,6 @@ public class JwtUtil {
 
 	/**
 	 * Validate the token against the user details
-	 *
-	 * @param token       the JWT token
-	 * @param userDetails the user details
-	 * @return true if valid, false otherwise
 	 */
 	public boolean isTokenValid(String token, UserDetails userDetails) {
 		if (userDetails == null) return false;
@@ -136,9 +114,6 @@ public class JwtUtil {
 
 	/**
 	 * Get user ID from the request
-	 *
-	 * @param request the HTTP request
-	 * @return the user ID if present, otherwise null
 	 */
 	public Long getUserId(HttpServletRequest request) {
 		try {

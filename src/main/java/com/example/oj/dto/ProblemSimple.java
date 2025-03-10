@@ -1,4 +1,4 @@
-package com.example.oj.entity;
+package com.example.oj.dto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

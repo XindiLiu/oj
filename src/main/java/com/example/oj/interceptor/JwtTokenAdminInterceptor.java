@@ -33,25 +33,6 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		return true;
-		//        // Determine if the current interception is a Controller method or other resources
-		//        if (!(handler instanceof HandlerMethod)) {
-		//            // If it's not a dynamic method, allow it to pass
-		//            return true;
-		//        }
-		//
-		//        Long id = JwtUtil.getUserId(request);
-		//        log.info("JWT interceptor, id:{}", id);
-		//
-		//        if (id == null){
-		//            //response.sendRedirect(request.getContextPath()+"/login");
-		//            response.setStatus(401);
-		//            return false;
-		//        }
-		//        else{
-		//            BaseContext.setCurrentId(id);
-		//        }
-		//
-		//        return true;
 	}
 
 }
